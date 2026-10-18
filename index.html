@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Equipos de filtrado · Riego</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Plano de obra de jardín: césped, agua, tubería negra de PE y piezas de colores de catálogo */
+:root{
+  color-scheme:light;
+  --bg:#f3f8f1; --bg2:#e4efe0; --card:#ffffff; --ink:#1d2b24; --muted:#5d6b63; --line:#cfdcca;
+  --cesped:#5aa04a; --hoja:#2f7a3b; --agua:#1e88d0; --agua2:#d6ecfa; --pe:#1f2224; --rojo:#d9433a; --naranja:#f08a24; --amarillo:#f5c518; --morado:#7b5bb5; --tierra:#9b6b43;
+  --shadow:0 8px 22px rgba(29,43,36,.12); --r:14px;
+  --fd:"Fredoka",system-ui,sans-serif; --fb:"Nunito",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:17px;line-height:1.6}
+h1,h2,h3,h4{font-family:var(--fd);line-height:1.15;margin:0 0 .45em;text-wrap:balance;font-weight:600}
+h2{font-size:clamp(1.7rem,3.8vw,2.5rem)}
+h3{font-size:1.2rem}
+p{margin:.4em 0 .9em}
+b,strong{color:var(--hoja)}
+button{font-family:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--amarillo);outline-offset:2px}
+svg,canvas{max-width:100%;height:auto;display:block}
+svg text{font-family:var(--fb)}
+
+#topnav{position:sticky;top:0;z-index:50;background:var(--hoja)}
+#topnav .in{display:flex;gap:4px;overflow-x:auto;padding:8px 14px;scrollbar-width:none;max-width:1200px;margin:auto}
+#topnav .in::-webkit-scrollbar{display:none}
+#topnav a{flex:none;text-decoration:none;color:#e3f2df;font-weight:700;font-size:.85rem;padding:6px 12px;border-radius:20px}
+#topnav a:hover{color:#fff}
+#topnav a.on{background:#fff;color:var(--hoja)}
+#prog{height:3px;background:var(--amarillo);width:0}
+
+.sec{padding:56px 16px 60px}
+.sec.alt{background:var(--bg2)}
+.sec.dark{background:#16302a;color:#e6f1e3}
+.sec.dark b{color:var(--amarillo)}
+.wave{height:26px;background:var(--bg);background-image:radial-gradient(circle at 13px -6px,transparent 15px,var(--agua) 16px,var(--agua) 18px,transparent 19px);background-size:26px 26px;opacity:.55}
+.wrap{max-width:1120px;margin:auto}
+.tag{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.tag i{font-style:normal;display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--agua);color:#fff;font-family:var(--fd);letter-spacing:0;font-size:.95rem}
+.sec.dark .tag{color:#a9c4b4}
+.lead{font-size:1.07rem;max-width:800px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid2>*,.grid3>*{min-width:0}
+@media (max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;color:var(--ink)}
+.pill{display:inline-block;font-size:.76rem;font-weight:800;padding:2px 10px;border-radius:20px;background:var(--agua2);color:#105f96;margin:2px 4px 2px 0}
+.pill.g{background:#dcefd6;color:#2a6a2f}.pill.r{background:#fbdcd9;color:#a32a22}.pill.o{background:#fde6cf;color:#9a5208}.pill.k{background:var(--pe);color:#fff}
+.note{border-left:5px solid var(--agua);background:#e6f3fc;padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0;color:var(--ink)}
+.note.y{border-color:var(--amarillo);background:#fdf6d8}
+.note.r{border-color:var(--rojo);background:#fde9e7}
+.btn{border:0;background:var(--hoja);color:#fff;font-weight:800;padding:10px 18px;border-radius:30px;box-shadow:0 3px 0 #1a4d25}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.b{background:var(--agua);box-shadow:0 3px 0 #0f5b91}
+.btn.o{background:var(--naranja);box-shadow:0 3px 0 #a75809}
+.btn.k{background:#55625b;box-shadow:0 3px 0 #333}
+.btn.sm{padding:6px 13px;font-size:.88rem}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.seg button{border:2px solid var(--hoja);background:var(--card);color:var(--hoja);font-weight:800;border-radius:20px;padding:5px 13px;font-size:.88rem}
+.seg button.on{background:var(--hoja);color:#fff}
+input[type=range]{width:100%;accent-color:var(--agua);height:28px}
+input[type=number],select{font:inherit;font-weight:700;width:100%;padding:7px 9px;border-radius:10px;border:2px solid var(--line);background:#fff}
+label.f{font-weight:800;font-size:.88rem;display:block;margin-top:6px}
+.big{font-family:var(--fd);font-size:2rem;font-weight:700;line-height:1.05;color:var(--agua)}
+.tscroll{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:.92rem;background:#fff}
+.t th{background:var(--hoja);color:#fff;padding:8px 10px;text-align:left;font-family:var(--fd);font-weight:500}
+.t td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.plate{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:10px}
+
+/* portada */
+.centro{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.centro .logo{height:80px;flex:none;background:#fff;border-radius:12px;padding:6px}
+.centro .logo img{height:100%;width:auto;display:block}
+.centro .nm{font-weight:800;line-height:1.3}
+.centro .nm small{display:block;color:#a9c4b4;font-weight:700}
+.hero h1{font-size:clamp(2.2rem,5.4vw,3.7rem);color:#fff}
+.hero h1 em{font-style:normal;color:var(--amarillo)}
+.docente{display:inline-flex;gap:10px;align-items:center;background:#24433b;border-radius:30px;padding:6px 16px 6px 6px;margin:6px 0 14px;font-weight:700}
+.docente span{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--amarillo);color:var(--ink);font-family:var(--fd)}
+.spray{animation:spray 1.8s ease-in-out infinite;transform-origin:center bottom;transform-box:fill-box}
+@keyframes spray{50%{opacity:.35;transform:scale(.92)}}
+.drop{animation:drop 1.6s linear infinite}
+@keyframes drop{from{transform:translateY(0);opacity:1}to{transform:translateY(16px);opacity:0}}
+.flow{stroke-dasharray:8 8;animation:flow .7s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-16}}
+
+/* simulacro */
+.sim{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;align-items:start}
+@media (max-width:960px){.sim{grid-template-columns:1fr}}
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;max-height:430px;overflow:auto;padding:4px}
+.piece{border:2px solid var(--line);background:#fff;border-radius:12px;padding:6px 4px;text-align:center;font-size:.72rem;font-weight:800;line-height:1.2;transition:transform .15s,border-color .15s}
+.piece:hover{border-color:var(--agua);transform:translateY(-2px)}
+.piece svg{width:56px;height:56px;margin:0 auto 4px}
+.piece.ok{border-color:var(--cesped);background:#eef8eb}
+.piece.ko{border-color:var(--rojo);background:#fdeceb;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.stepbox{border-left:6px solid var(--agua);background:#fff;border-radius:0 12px 12px 0;padding:12px 16px;margin-bottom:10px}
+.stepbox .n{font-family:var(--fd);color:var(--agua);font-weight:700}
+.phase{display:flex;gap:4px;margin:8px 0}
+.phase span{flex:1;height:8px;border-radius:4px;background:var(--line)}
+.phase span.done{background:var(--cesped)}
+.phase span.cur{background:var(--agua)}
+.slot{animation:pulse 1.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{50%{transform:scale(1.25);opacity:.6}}
+.placed{animation:pop .45s ease-out}
+@keyframes pop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.feedback{min-height:70px}
+.chk button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;margin:6px 0;font-weight:700}
+.chk button i{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-style:normal;flex:none}
+.chk button.done{border-color:var(--cesped);background:#eef8eb}
+.chk button.done i{background:var(--cesped);border-color:var(--cesped);color:#fff}
+
+/* quiz y glosario */
+.quiz{max-width:760px;margin:auto}
+.qbar{height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;margin-bottom:16px}
+.qbar div{height:100%;background:var(--agua);width:0;transition:width .4s}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px 16px;margin:8px 0;font-size:1rem;font-weight:700;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--agua)}
+.opt.ok{background:#dcefd6;border-color:var(--cesped)}
+.opt.ko{background:#fbdcd9;border-color:var(--rojo)}
+.fb{margin-top:10px;padding:12px 14px;border-radius:10px;display:none}
+.fb.show{display:block}
+.score{font-family:var(--fd);font-size:3rem;text-align:center;color:var(--agua)}
+.flips{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.flip{perspective:900px;height:140px;cursor:pointer;background:none;border:0;padding:0}
+.flip .inn{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.on .inn{transform:rotateY(180deg)}
+.flip .fc,.flip .bc{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;display:grid;place-items:center;padding:12px;text-align:center}
+.flip .fc{color:#fff;font-family:var(--fd);font-size:1.15rem;font-weight:600}
+.flip .bc{background:#fff;border:1px solid var(--line);transform:rotateY(180deg);font-size:.88rem;color:var(--ink)}
+footer{text-align:center;padding:30px 16px 40px;background:#16302a;color:#a9c4b4;font-size:.85rem}
+footer a{color:#cfe6d6}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* propios del tema 3 */
+.ord{display:flex;flex-wrap:wrap;gap:8px;min-height:90px;padding:10px;border:2px dashed var(--line);border-radius:14px;background:#fff;align-items:center}
+.ord .chip{border:2px solid var(--line);background:#fff;border-radius:12px;padding:6px 10px;font-weight:800;font-size:.84rem;display:flex;align-items:center;gap:6px}
+.ord .chip svg{width:34px;height:34px}
+.ord .chip.ok{border-color:var(--cesped);background:#eef8eb}
+.ord .chip.ko{border-color:var(--rojo);background:#fdeceb}
+.arrow{font-family:var(--fd);color:var(--agua);font-size:1.4rem}
+.disc{border:3px solid #fff;border-radius:50%;width:54px;height:54px;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;position:relative}
+.disc.on{outline:4px solid var(--ink);outline-offset:2px}
+.discs{display:flex;flex-wrap:wrap;gap:14px;margin:10px 0}
+.gauge{font-family:var(--fd);font-size:1.7rem;color:var(--agua)}
+.scn button{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;margin:6px 0;font-weight:700}
+.scn button.ok{border-color:var(--cesped);background:#eef8eb}.scn button.ko{border-color:var(--rojo);background:#fdeceb}
+.log{max-height:150px;overflow:auto;font-size:.85rem;background:#f7fbf6;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+</style>
+</head>
+<body>
+
+<nav id="topnav" aria-label="Apartados">
+  <div class="in">
+    <a href="#inicio">Inicio</a>
+    <a href="#obstrucciones">Obstrucciones</a>
+    <a href="#prefiltrado">Prefiltrado</a>
+    <a href="#arena">Filtro de arena</a>
+    <a href="#malla">Filtro de malla</a>
+    <a href="#anillas">Filtro de anillas</a>
+    <a href="#cabezal">Orden en el cabezal</a>
+    <a href="#limpieza">🔧 Simulador de limpieza</a>
+    <a href="#elige">Elige el filtro</a>
+    <a href="#quiz">Autoevaluación</a>
+    <a href="#glosario">Glosario</a>
+  </div>
+  <div id="prog"></div>
+</nav>
+
+<!-- PORTADA -->
+<section id="inicio" class="sec dark hero">
+  <div class="wrap grid2" style="align-items:center">
+    <div>
+      <div class="centro"><div class="logo"><img src="data:image/webp;base64,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" alt="Logotipo del CIFP Zonzamas"></div><div class="nm">CIFP Zonzamas<small>Curso 2026-2027</small><small>1º CFGM Jardinería y Floristería</small></div></div>
+      <span class="tag"><i>3</i> Infraestructuras e instalaciones agrícolas · Riego</span>
+      <h1>Equipos de <em>filtrado</em>: que no se tape ni un gotero</h1>
+      <div class="docente"><span>BS</span>Docente: Beatriz Socas Guerra</div>
+      <p class="lead">El problema más grave y frecuente del riego a presión, y sobre todo del <b>riego localizado</b>, son las <b>obstrucciones</b>. Aprende qué tapona los emisores, cómo funciona cada filtro, en qué orden se colocan en el cabezal y cuándo hay que limpiarlos.</p>
+      <div class="row"><a class="btn o" href="#limpieza" style="text-decoration:none">🔧 Ir al simulador de limpieza</a><a class="btn b" href="#obstrucciones" style="text-decoration:none">Empezar</a></div>
+    </div>
+    <div class="plate" style="background:#24433b;border-color:#2f5248;padding:0;overflow:hidden"><svg id="heroSvg" viewBox="0 0 460 360" role="img" aria-label="Agua sucia que entra en un filtro y sale limpia hacia un gotero"></svg></div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- OBSTRUCCIONES -->
+<section id="obstrucciones" class="sec">
+  <div class="wrap">
+    <span class="tag"><i>1</i> Introducción</span>
+    <h2>¿Qué tapona los emisores?</h2>
+    <p class="lead">Los goteros tienen un paso de agua muy estrecho. Según su naturaleza, las obturaciones pueden ser <b>orgánicas</b>, <b>inorgánicas</b> o <b>precipitados químicos</b>. Elige de dónde viene el agua y mírala al microscopio.</p>
+    <div class="seg" id="srcSeg"><button class="on" data-k="0">🚰 Red pública</button><button data-k="1">🕳️ Pozo</button><button data-k="2">🟢 Balsa o estanque</button><button data-k="3">♻️ Agua depurada</button></div>
+    <div class="grid2">
+      <div class="plate"><svg id="micSvg" viewBox="0 0 520 320" role="img" aria-label="Muestra de agua vista al microscopio con sus partículas"></svg></div>
+      <div>
+        <div class="grid3" style="gap:10px">
+          <div class="card" style="border-top:6px solid #3e8e46;padding:12px 14px"><h3 style="font-size:1rem">🌿 Orgánicas</h3><p style="margin:0;font-size:.86rem">Restos vegetales y animales, <b>algas</b>, bacterias.</p></div>
+          <div class="card" style="border-top:6px solid #9b6b43;padding:12px 14px"><h3 style="font-size:1rem">🪨 Inorgánicas</h3><p style="margin:0;font-size:.86rem"><b>Arena</b>, limo, arcilla.</p></div>
+          <div class="card" style="border-top:6px solid #b9bfc4;padding:12px 14px"><h3 style="font-size:1rem">🧂 Precipitados</h3><p style="margin:0;font-size:.86rem">Sales que <b>precipitan</b>: cal, hierro… o restos de abonos.</p></div>
+        </div>
+        <div class="card" id="srcTxt" style="margin-top:12px" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- PREFILTRADO -->
+<section id="prefiltrado" class="sec alt">
+  <div class="wrap">
+    <span class="tag"><i>2</i> Prefiltrado</span>
+    <h2>Antes de filtrar, quitar lo gordo</h2>
+    <p class="lead">Si el agua lleva mucha <b>arena, limo y arcilla</b> u objetos flotantes (plásticos, ramas…), hay que colocar antes un <b>prefiltrado</b>: si no, los filtros normales se colmatan enseguida.</p>
+    <div class="grid2">
+      <div class="card">
+        <h3>🛢️ Depósito de decantación</h3>
+        <svg id="decSvg" viewBox="0 0 480 280" role="img" aria-label="Depósito de decantación con sedimentos en el fondo y objetos flotando"></svg>
+        <p style="font-size:.93rem;margin:6px 0 0">El agua entra y, para salir, debe pasar por un <b>estrechamiento a media altura</b>. Lo más denso que el agua se queda en el fondo (<b>sedimentación</b>) y lo ligero, arriba (<b>flotabilidad</b>).</p>
+      </div>
+      <div class="card">
+        <h3>🌀 Hidrociclón</h3>
+        <svg id="hidSvg" viewBox="0 0 480 280" role="img" aria-label="Hidrociclón en forma de cono invertido con el agua girando"></svg>
+        <div class="row"><label class="f" style="margin:0">Caudal</label><input type="range" id="sHid" min="1" max="10" value="5" style="flex:1"><span id="vHid" style="font-weight:800"></span></div>
+        <p style="font-size:.93rem;margin:6px 0 0">Cono invertido. El agua entra <b>tangencialmente por arriba</b> y gira: la arena sale despedida contra las paredes y baja al <b>depósito de sedimentos</b>. El agua limpia sale por el <b>conducto central de arriba</b>. Para partículas de <b>más de 75 micras</b>. Su pérdida de carga depende <b>solo del caudal</b> (dato del fabricante).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- ARENA -->
+<section id="arena" class="sec">
+  <div class="wrap">
+    <span class="tag"><i>3</i> Filtro de arena</span>
+    <h2>El filtro para las aguas más sucias</h2>
+    <p class="lead">Retiene <b>partículas orgánicas</b> (algas, bacterias, restos) y <b>pequeñas inorgánicas</b> (limos y arcillas). Es el más adecuado para aguas muy contaminadas o con mucha materia orgánica. Un depósito metálico o de poliéster con una capa de <b>arena silícea o granítica</b>.</p>
+    <div class="grid2">
+      <div class="plate"><svg id="arSvg" viewBox="0 0 520 380" role="img" aria-label="Corte de un filtro de arena con el agua atravesando la capa de arena"></svg></div>
+      <div>
+        <div class="seg" id="arSeg"><button class="on" data-k="f">💧 Filtrando</button><button data-k="l">🔄 Contralavado</button></div>
+        <div class="card" id="arTxt" aria-live="polite"></div>
+        <div class="card" style="margin-top:12px">
+          <h3>⚖️ ¿Qué tamaño de arena?</h3>
+          <p style="margin-top:0;font-size:.92rem">Debe ser igual al <b>diámetro de paso del emisor</b>: entre 1 y 3 mm. El gotero de esta instalación tiene un paso de <b>1,5 mm</b>.</p>
+          <label class="f">Diámetro de la arena: <span id="vGr"></span></label><input type="range" id="sGr" min="0.5" max="4" step="0.25" value="1.5">
+          <div id="grOut" style="font-weight:700"></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid3" style="margin-top:22px">
+      <div class="card"><h3>📏 Capa de arena</h3><p style="margin:0;font-size:.92rem">Como mínimo, <b>45 cm</b> de espesor. Boca de carga de arena arriba y de descarga abajo.</p></div>
+      <div class="card"><h3>📍 Dónde va</h3><p style="margin:0;font-size:.92rem">En el cabezal, <b>antes de los contadores y válvulas volumétricas</b>, que necesitan agua limpia para funcionar bien.</p></div>
+      <div class="card"><h3>🧴 Fin de temporada</h3><p style="margin:0;font-size:.92rem">Lavar con <b>agua y cloro</b> para evitar que proliferen microorganismos.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- MALLA -->
+<section id="malla" class="sec alt">
+  <div class="wrap">
+    <span class="tag"><i>4</i> Filtro de malla</span>
+    <h2>Micras y mesh: el tamaño del agujero</h2>
+    <p class="lead">Filtra en la <b>superficie</b> de una malla no corrosiva (acero o plástico). Se colmata rápido, así que se usa para retener <b>partículas inorgánicas</b> en aguas <b>poco contaminadas</b>. Si hay algas, antes hace falta un filtro de arena.</p>
+    <div class="grid2">
+      <div class="plate"><svg id="mesSvg" viewBox="0 0 520 330" role="img" aria-label="Malla ampliada con partículas que pasan o quedan retenidas"></svg></div>
+      <div class="card">
+        <h3>🔬 Mueve el número de mesh</h3>
+        <p style="margin-top:0;font-size:.92rem"><b>Mesh</b> = número de orificios de la malla por pulgada. A <b>más mesh</b>, orificios <b>más pequeños</b> y <b>más poder de filtración</b>. 1000 micras = 1 mm.</p>
+        <label class="f">Malla: <span id="vMesh"></span></label><input type="range" id="sMesh" min="0" max="5" value="2">
+        <div class="big" id="mesBig"></div>
+        <div id="mesTxt" style="font-weight:700"></div>
+        <div class="note y" style="margin-bottom:0">Para riego por goteo se recomiendan <b>125 micras (120 mesh)</b>.</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:22px">
+      <h3>🧪 ¿Y el abono?</h3>
+      <p style="margin:0">Los fertilizantes se inyectan <b>entre el filtro de arena y el de malla</b>. Así no se favorece la formación de algas en la arena, y la malla retiene las impurezas del abono y los precipitados que se formen. Además, la malla va <b>después</b> de la arena para retener la arena que pudiera escaparse del filtro de arena.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- ANILLAS -->
+<section id="anillas" class="sec">
+  <div class="wrap">
+    <span class="tag"><i>5</i> Filtro de anillas</span>
+    <h2>Discos de colores que filtran</h2>
+    <p class="lead">El elemento filtrante es un conjunto de <b>anillas con las caras asurcadas</b> montadas sobre un soporte central con orificios. Se comprimen entre sí al <b>roscar la carcasa</b>. Tiene la <b>misma aplicación que el filtro de malla</b>: se usa uno u otro indistintamente.</p>
+    <div class="grid2">
+      <div class="plate"><svg id="anSvg" viewBox="0 0 520 340" role="img" aria-label="Filtro de anillas con su carcasa, anillas de color y soporte central"></svg>
+        <div class="row" style="margin-top:6px"><button class="btn b sm" id="anOpen">🔓 Abrir y limpiar</button><button class="btn k sm" id="anClose">🔒 Montar de nuevo</button></div></div>
+      <div class="card">
+        <h3>🎨 El color dice cuánto filtra</h3>
+        <div class="discs" id="discs"></div>
+        <div id="discTxt" aria-live="polite"></div>
+        <div class="tscroll" style="margin-top:10px"><table class="t" id="discT"></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- CABEZAL -->
+<section id="cabezal" class="sec alt">
+  <div class="wrap">
+    <span class="tag"><i>🧩</i> Reto</span>
+    <h2>Ordena el cabezal de filtrado</h2>
+    <p class="lead">Un jardín se riega con agua de una balsa con arena y algas, y además se abona por el riego. Pulsa las piezas <b>en el orden en que pasa el agua</b>, de la balsa a la red de riego.</p>
+    <div class="card">
+      <div class="mono" style="font-weight:800;color:var(--muted);font-size:.8rem;margin-bottom:6px">PIEZAS DISPONIBLES</div>
+      <div class="ord" id="ordPool"></div>
+      <div class="mono" style="font-weight:800;color:var(--muted);font-size:.8rem;margin:14px 0 6px">TU CABEZAL (el agua va de izquierda a derecha)</div>
+      <div class="ord" id="ordLine"></div>
+      <div class="row" style="margin-top:10px"><button class="btn k sm" id="ordReset">↺ Empezar de nuevo</button></div>
+      <div id="ordFb" class="note" style="margin-bottom:0">Elige la primera pieza por la que pasa el agua.</div>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- LIMPIEZA -->
+<section id="limpieza" class="sec">
+  <div class="wrap">
+    <span class="tag"><i>🔧</i> Simulador</span>
+    <h2>¿Cuándo hay que limpiar el filtro?</h2>
+    <p class="lead">A medida que el filtro retiene suciedad, aumenta la <b>pérdida de carga</b>: la diferencia de presión entre la entrada y la salida. Se limpia cuando esa diferencia ha subido <b>2 m.c.a.</b> respecto a la del filtro totalmente limpio. Riega día a día, lee los manómetros y decide cuándo limpiar.</p>
+    <div class="grid2">
+      <div>
+        <div class="plate"><svg id="limSvg" viewBox="0 0 520 300" role="img" aria-label="Filtro con manómetros a la entrada y a la salida y goteros al final"></svg></div>
+        <div class="plate" style="margin-top:12px"><svg id="limChart" viewBox="0 0 520 200" role="img" aria-label="Gráfica de la pérdida de carga a lo largo de los días"></svg></div>
+      </div>
+      <div class="card">
+        <div class="seg" id="limSeg"><button class="on" data-k="arena">Filtro de arena</button><button data-k="anillas">Filtro de anillas</button></div>
+        <div class="grid2" style="gap:10px">
+          <div><div style="font-weight:800;font-size:.85rem">Entrada</div><div class="gauge" id="gIn"></div></div>
+          <div><div style="font-weight:800;font-size:.85rem">Salida</div><div class="gauge" id="gOut"></div></div>
+        </div>
+        <p style="margin:4px 0 8px;font-weight:700" id="gDiff"></p>
+        <div class="row"><button class="btn b" id="limDay">💧 Regar 1 día</button><button class="btn o" id="limClean">🧽 Limpiar el filtro</button><button class="btn k sm" id="limReset">↺</button></div>
+        <div id="limFb" class="note" style="margin-bottom:8px"></div>
+        <div class="log" id="limLog" aria-live="polite"></div>
+        <p style="font-size:.78rem;color:var(--muted);margin:8px 0 0">Consejo del tema: lee las dos presiones con el <b>mismo manómetro</b>, para que su descalibrado no afecte. Valores de colmatación inventados para la simulación.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- ELIGE -->
+<section id="elige" class="sec alt">
+  <div class="wrap">
+    <span class="tag"><i>?</i> Casos prácticos</span>
+    <h2>¿Qué filtros necesita este jardín?</h2>
+    <div class="grid2">
+      <div class="card scn" id="scn"></div>
+      <div class="plate"><svg id="scnSvg" viewBox="0 0 520 260" role="img" aria-label="Ilustración del caso práctico"></svg></div>
+    </div>
+  </div>
+</section>
+
+<div class="wave"></div>
+
+<!-- QUIZ -->
+<section id="quiz" class="sec">
+  <div class="wrap">
+    <span class="tag"><i>✓</i> Autoevaluación</span>
+    <h2>¿Dominas el filtrado?</h2>
+    <div class="quiz card" id="quizBox"></div>
+  </div>
+</section>
+
+<!-- GLOSARIO -->
+<section id="glosario" class="sec alt">
+  <div class="wrap">
+    <span class="tag"><i>Aa</i> Glosario</span>
+    <h2>Vocabulario del filtrado</h2>
+    <p>Pulsa cada tarjeta para darle la vuelta.</p>
+    <div class="flips" id="flips"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="centro" style="justify-content:center"><div class="logo" style="height:60px"><img src="data:image/webp;base64,UklGRvJHAABXRUJQVlA4TOZHAAAvDcE4EE1IjOA2jqRqAPcCm3/Akr2zGUT0fwJ4Fj9t3vpDybbdPirA2/xihrZrLxbMBrbBDqmPl3QzbDPbgeLLBtjrDNvMtgIzkCaHj7JtZpd+zSNv1nK4u9Q7JCUS8i5Ad/M2B0+66DLonmAJtpRc1OJXhQbmNili3vobvym2ozveuuk33Qt/2VYeJG8TeuPNpi/WC6+ghuQbAXxvoR3P6g6V5ya4LcKHuR59Ybd2EFQFBITnNki2ogDHZKDkxSSDUsCAI4beXIcIzBAngIAcH00SoAB50jsSCCK83L5BAvwt+QGSQER6bHz0JmnnZ85k3QcWklxte5vqiA4jDxmy/6UwKrfR+W5vKZ+i9iuyaP4dZwmSXNtWrWrk5OC2gpfIaQDe/4ZQcv+Ks9HIciRJtZ0wM3sBbwne/zfzmK7GdFSPR0/U5qPzQP2fAGwoHSAE9vcJj7BlFjDQWyBNEiKGjVJx3ymQo+kkdBi/6CnheyF+ToCj8WcQRVBcZWEBEINDoZIQAIjO1kRLyXxgjTSRcs2BVFieEczA8yyzZ59/LfP5NYuHptuFulVpyAzmU39ISdqeRgBgtBr9dacVNuJ4+eMQmPPMt7oqgZq/XbuoPa6i648MCTsEwL9NOgAUSHNbSOakBADDqrOiQF8B0Gaur718NjMDANWkAF7zmOlIj9POThmCU4DlUQ+zxQ5AgQQ7cP1PXjJzkwHwEgAIWpPlQ2KUyQ3/LgNqKyQEVZ4TurA94TqeDYCXBEARIoOvAAFg+q6CKi0hCMU+rr3mOxgUutoOAJRWgLpPWVRRjp5H4y6s4rUEXdOCDktx3mQVLBcFmGb8wuZ8AiABaAAwakXBcgs3oTP/y0erKUACFDQ7k1BPoWGyvGc2mMVEQy6PzEA/y6SCFvyQlB7geXLnjx3gJL5ptFwfOxl9xcm1RrBjb0eWP9bKvRprRQMbAKBNfr4X6UMK2SPvQ4D7y7kGUgNnz9LjZwMAReaCHZ4FAAFmgmpxUQM8268BQgGAifIMKJC9+QCcCe0EAFIAek0BnS0AMx0+9iFdFgBsABM6hH3QjFQAzAFA1xoNgsdppUGIQAAQwIgRMpe5pcYnCuATIZjDWXHGClUOecxjgpTyEfK5hZHq2WWAuwAgkUhDQU0SaPvhDwDziufXAgDXXFsBQMq6fZCSAnCRIftCYHOb2h4AxjTpbwG4H5l/8/VYz7UAZTpuY2xh6LW212dgxLkQdN3fdh/PzGsf037FfYZorRUQTnClKs/LmVdZLvjC3WshQwCiQMJj99HjfibuuQ/g8bsWbJm0EkJGVkxM7POwAdvn6nwTUuh0DBfpo/9/1dy4eX/vMzOSLMv2kpehzBj0yptVmDllZmZmZmZmWigFvAxaW5DFcpiTJbMty5Jm5rnfP57f73d/995Ho3P616dMU+409slh3tOAT3T2hFy8hdB2jsOJCnvCsDgqquDgk+MTUlQmhcn/KX9wpkxTCKsQdrkNu2HUhG3bsrlxdN7v9xeoqmRJLR8UNDuc5uAw84qZmXlmFVoNM22ZmRlNI43cYUajlHHbVnH933tjwrbt+B9J5/28PwRV1baN8axs27P1LG3bXNq2bdsz7e7xTKPQSOef/P+/3/c8EgAAUJzk7n89OlVEpZSWbhtULOxuaURsaUSxCAETSVsJke7ubpAGGZ0bY6y3CQCoX9n3S/0j6BkfhTn9Flz/6Jp0L3dlfO6keuMs5pOYKxJBdIVDYwogGnhKYHB8YiOrlqEzm26x+Dc2H907N+EWYxIecHe07gfSxPFepdBqPqiaVvbUJputgMiBNKDKCXSYgykzFJcRYqhgcNJ+6JZvv24ChDtAi6tPrbXSZJahL/RddM0oUThAVD/wPGgm3WQ6jNbSvmXi8moQVnZc7ucnw07k5kZrW1HbDDPYBCQ1GgSwCD1QTaqycG467p75bodjcc1PviY+iXXBXpftjpoliNpphuHSQRUV6fyTvkQjcHYkjro4qh594hazjnhYAV7thnlMAa300lb0LjsEi0d/AaVyp46ZnKRjADgNw1eDEjOJ/a38d5nprXmKxDSHy6wrZiwJgoYnsoDJ7e2xPs1b4GZyVz+lZ7OciFO/QUP2ErsvYfd209/bKd/yOrGUh/wlH4dc/uf/Cao7/mv80UzpKIi9E0dduYHFooaui5rH07HLerbsMZjQd/h3JEunQ8wcAlNX6wkgCjjjRi2RVfZuNlBnPmsekpka6yrGFZQ0lCnJ4+9DNHhu2b6DcQI5ReeIWZL3K7bHSKDNbB4A+THlAfYgq+GM0ToSnAZ9uzfw0TF/WulGf7nDASpmMA/gHvlxuQtuIKYhDczpPSqStPE7QFt2W8xB4V6qCmzEBRJmKkdtSY27cPHE8WXU/G6xrm4XrGCYCOPVXFaMLEnqfF6D1gNCrwFVx/BNbsCXmcnq2+vK6tsZL3ZqwSMAJBoBfGC4LFpmDCgwZUyXyYKxWMyNxoo+de3AnDi9YjHxtu0SLrsCy2t34JQ9vtgugm02EWZEDUkfpOjIGWswCoQiogAiQFgMOQJLGATVGKbGPCgExWuqx5TNzPnGSnmOdcqjZ/Y+hb/v59rd09meEJTzs32JDdTOSI56/Kju4fpbVfu80fv3/36x+Ge20R405d8EdmJelys2Z0WfrW5oUjpkZJBeS7qZ3defu0HW08TGe3+51KnyDW++LXnqZncQyspL01UeMYXVmYjYvfxvmZF6KAo0+KJm7Erd5kce3a12f+dP/a+3jzxTbuouhM8QbrD37lL9C7tsxMxLyQaSC70YhkpVMzGuKoE2oNMu8F0E2WDBVS1RYGuXHPbOka3Wf4NP/ZfoWK56jPXZgHIGqvtmAo/u/daN44m5QEgpSGrGSFhO2ICOPIEzo5gDBMYkZHpkrhj61N6v8Ftfjx76/P2YM3ZgDzu+JVrulSQhaVq8VCK9buR+kBC8oYpxUX4fbCFvBnA9H3SS+mgho0SviW17R6MBbTs6rgHtSsiMmVRMypmLEbXzm/6tB/C+vbXR7ZWKXRsLvdFRdBQs5CkpT6QMvBpI8xZubfdc4A182B1MMKBKNku+dFg3oGJ7Ovy+ScCEApeEiffPbWrh1/yWn5NYeWhT2ej4oElpumhYbCCwFPIOaq6r+oc+/zrzbnt3g/WjLkG8Dxil0wXM4vfmmh1YAwHuJLiMWibedfKGe6Ca/pP+8deLrti5pdIXUysjTwzNKLkSwyBqvDF+x5MnqQFrO/dYvlN5zKnprVXZOpPTdoYwLcnCK9TR1Psikv1zu5p94smL4M1P34M8uXfdhGRbGdsNnbdyoNoJope/lVXgV/qqv//joQnotivj2/MTkgvKSL0BD0m9bSsTLEkeAiSvyOZ53Bi2Gn0DH4E98enWt8mG2E2YUSS12EPIu6CS7/A7P0/etnPABgtQtTEiPotjMV5Gs0vOd7jzvO4usPh9ujydtbHexfYT6vTEeQb2av7HFyOZ5DuewYxUbLk66hFrhJ5Qe3N1jlMCi614zLPvVjDrtIPNQSxPsQmWJCD6SItmrcm2uQUeF5WdGvyznv1gObs67ihHH7ayIeRoELUbqKfdvolLOem3f8bGKXtfOAdkBWeNSkb7Qs3AtwHCBdCKETekK1x/ADVzDRST2O6/Q68EdrA3IumjMW/GrtYrYLRgYmHnFlZZy8V5+CWBodUboqKwvVq3aACBGnuCF8Ebf8HbrmVeO8Do4562pEtM7YcRJd7pt3/eCTofX0eJwIaA2z3zvFDgq+EgLjpF23acgOXmFWJpAvLAe7gp/f/yqk8dN76ytlNjr/vUXmJyXrOzOmdsd4gaii41CVZEkngXrJI7E294KX2bcYaNkmTEgX3zvDtV5gJ5iALYJ73LSE297lOPIUxfbXvcXDEOPbVqhBWLCa9Ri6GS0YIZDwvq1J9thCEss2XGbNHviochqiJwvKyhUo0fMZYZNDbNfRWCkF8yj1EDlmrsCV4Hf9aT36RucdU4h1EEqMwUE6aIDqfTpKu3Tnd//zw+9qP3M2ZXvfhc0invvekCqQcYNTXTaX/IN3+eEznC1kqmTYMfbfHRx0ot02PFFVEzZqTuOAaSVIwEftvRezpt67JesXvGlNvdGUyopI8ubNoqHu6XYk4SyZvQii3irohTXGT8bS5eX9BiwjIc9rgNGElkosGpaSNT7HvngWKwbspPf/6H8Dd+8keP9gg3dZvCKyvwPRaNBnRdEQ2M1X3S12R6SZL4DrhLOJ4lfKjNaihGSPJSYeDSetwN/DrCFlolaezyQfL05lHJbyzJ2fa9M2rQrxeGcTJLkoQRvJSAESti8m1Ciec/t6Rv80u+6uH3+4df+d3jvCRM77brD+nMNky0RjORGVYzr3v4QTIrXL9m4eSoSCQgAzFJVSFltGrH33/GjKLXfOoH4U1OPu6IjXni6KoqITCqXURBLxNS+GD58uWIMOcWJXVerh+gQWBYDs7u3IkRkxBMsbUDYtTgziVNkhBFHj4Jt79pdFf3knlo1TfimN0P2+zL8abFlZcBkBHo1jSUKt9S+Ue4S1PqCY/8ozFNMLWDgEqnADHmyTfb1Nd13/mpg9d44TuV3Kr5n1moCdskUHHYLklI3+T/k6YwjE1jMD6aIKncHmfVaO9iDgBu5QAvapqtlU6X4M1zHCz3ldS3Fbj21g9t7afumxz3IKpyZ8x4UuSkTdm1PvTtT4BK/jlGwcf+McklDF7pwEXKfTNRZTvvIklF9jttSiPEMxhLPjgqfopHiMOaAad0FBEMqUYXed9uxgEb3Q+0KqSNB2Bx2dXDeQebs3j1sdzv5+AR4pIutiYfbHPAX9W9DXjTmz+qb3h7cgSwqkwsvKINyVM5Daritd97JsZvv9oR89hDVun7zfzqE/1gX/DFUOGbjR/cZioJ1lSCCYy9EscHMcAMFDKmRv4HlmoIULaQFzPgt/2/eyi5gO/3iaVtynmAVuc3fvofOV1jutXK1zoRy0/ftE+Syux8ik4NRahG0I2wum5w9BN6vvDz5CiFqCqxYqvs6Wt+jj9Isyr/9NvLqJfdO4yp0t/SU9HlvIpX6jo/sN7HIco5QMGkzuLvNC+VOj0i7AZKcM3ISLL3+3xCs4TBIFsAN+BDSqemAvxtxGNAyLgvSvqAYhtP47knsAohMOOteq9/7Se3sOFHnHTBqyIN32h0vk4fJF/Vf8a/+2by2NWlnw0eDkHJMGOZD+Xe+q2Kv/D0J9FL37IfeQAWnmAjCAdTTbx8kPlvRUo+YvvQ4vyAhWZLQBL0FYXh8bm+q6mdTcujPXr/1Vm2kjT24DEYv/VQBMaVBqZhhK5CH9i/ILUc8/hPyfcuxtMTBxqyKmKWiORi7YQ770GV8Vr/7qstbv7Pfi4UdJWMofoQUWxP75Xxe/4JyNF/6ZfVe/O015UZompaSq4WPQaMWptdcIs3Prp/pPT9MDpA7eWjR4nYeL3yUJNEKwM+NyRxP+UAjMaUSxYInqQ9pMMe4hRZkk55sKGXvnXtkU2PAZtCsTzL50HyYVA13tZP446/6SblZcioIgz04z2rbOU87tu+D3fi+3xv/s9+wYptAaXSYSFR2xbBMKWGXzCASC5frny+3Z3/gqHC2cATD8BLIm4oL6bTVU3AxkbJ8EamrkGJmkpqluIp6Kry6vcwJQEfnjPHlayY2DNa5Jo8VY3veuwjv2DrEuJoKt0QeKbCCbcPHj+grDd/9jvUPb4YJkpd8pG0nlOgmt/P/juGJ0kg8Mz8j/ubMAPTWyt3l6SD1nNRJpNiuBNIBd5BCYSYVWTYWul+dcpQYz0192oKj+j0fdd9Qkm6RbhbgRDRQ+e7jV3Wze49CVGNN7r5i0p+JdQTOwNVssEpyS2WhN35e6HK6o99G7L2el0ywilJpUKbb8rzWB+EqIXT3/a3LUbGgBZNnTz51v52sXV8aucRV2zjAayVpN9HZX2QVr7/OvymW4+xKxT0xmQAwZVX+zNiOQ9DYyTjW/glN2lx2wb2u/zSQDWX88tFmFV85KOGOklr+9VhKBCyVgJMq8bb+m7ciUc3bqL9QELJCA/zt8gW/kAf/ziovDf8iu8mLzu+jMBcB0SJFB0CJo4v6tTK0XT2d194QIsuRmSCwR7ENOhhU9j8pJNvP0G0iO8HNPj0pH/LJQYc85XCAYaaPXkN3YWiVOc6pElCNtCAkA//VeNNDr7PsJ/6iDFW8hKVUe7VM+XunVIYm9svMFBih8m0jp/aCv+L1TEMfiDRhFCKLvzTcAZuEd1K9tYe+CaJRoEWCBX8z/cYT/wAeflny9M384AGr1RD4BT1CDz63a+Cyj02ewtdG0BGica0D/eu+fTzVtVeqCucV5DhJDTVRzE1rEtpWkoaeVvnj0sq1DoTEMAIS6az3fDgR42tE/X/lPoK0M4c/zt7FU+5r5OfRWlpGKIvqfjo48auPFe7Nx/0sBEDXbMBEyHM0PrRWzVpWB91eVQHmpKBWTpueH3pmz79fNRLbmeAhl7uL5DpBn4C09vdHvjghxCVipnzlN+ZT122Kftldh+LRanRhT/vvBgsGw/u9O7fLqntsPo527FlXAAXeEHzDgnzzD0yZ7edxx8mFbzkezfpFvbeIDFbzv3SF3zwX1y49xKSCltP0vNR6ySxuTJt1Jr7RCYPV7nSPaFx1vIwIV3m1jtK0oVhAgGCygdNyHOTvR9T9lnxHjuUCixPYibOvVf+XpaoTSrMAu/0Tu8UgYYSFw3DJeiAWPCGcCiDFUWBDV+VvATJqgwFavraU4zC1Kmiada678GT5BekaSEoEKBZXuNdYI6tGh67+9OnTN45skqcY6i02Z7XvPxKqPzHPfbLyuXOZTqJtuLPCO9WXr06XTPgznThUhUaqiQZklYIBgbeUhnX+wHSls09Lxw3DKpEjwUP/+Mvzn2q8bjHfm6rLyuDzAbFKapv4vZAl6BmwizqkXlV/c8DBWK0oIKmFzPcxM8qM/zwxEyp8IftFqQ6LXvRcpEKsopDNxuOyv/1fnPwW65vovVw3cpZWa7zU/8Pu+o45DNB+49g7s/yXX8x3JEPiWl64sNSqy73mFmPWlWdRT4OFIhbgVCZ0Krd1C/aevrL6yjx19G+c1OXPNVpCckUnhJTnCSN2WGq8dR9xwu+1uMPy//eVR7z5VdK9i3LYrGdMLTa7IksIAC7iyyGXTppanvdSo6twa7CJU7toZWhJdPe6w6Fd9WO+YIHtth+FZJBpGWuwHf7HQEEsAAOMDUFxvUsGWldJQhe//oGB7BEXzJEs1zlacZduwNBgFO8g4y+ClKtbodhBn1JRUeuQjb1Ga2qswcETD0FM0q+zT/6L/T2X8gE7WIcBCmlYjhIM0kcp1vSqyXRBT9BchW8+qQ81x/2y2oMGJCnAQobfJiuZ9qhGOZUFXK2Lt2gQZtNYhYIGYwKj+HXySvbHzCXKKi4C8OG+6u/bmJUqwtCF2Au8G8jZDhl9nev6TZUe/9w/6j7kx79lVfqmfWCsAFUlZ/2z41f78/ASxh8Pnh29MPyWazUWBj3VLmqwvD40oEK2kRCgRCambYCsWKVSpgp0WmxMZf/sGotSmgCzz333BBFK5dcUItBWHT8lLj2Z74Ob+o45QlYZYUqZttX0KIPT3wgfSlgS4r1/G1UxQyjb+essGePpwVCNKwks+RMybqoKA58J2p6HjyfRbWasGgJzjvvvPMCLtO29DGoaxNR2ruOkXDyUyRcLA4o97sYahW0KDP4doxRCoOq2JE8VpQ5mJ0hWtyUcX9hAz9BxgAxoNL2OHqzh6p33fhWM5JcRELRp/Wlr6vNS2T5Kz4GakZGNQK5tEQqSPIEdwIwjQLNeBbnJ4CKi0jeFvpjTBgmEPIsbsLE/JuzThyQFIeeIpxV87p8uxapImqNotBvlotaTaSs3x8Y4xR9VrVSwmKzUSstusJtAiY11Mf+B9CrYIzJ5qk4CqJAiHWByC02/4U8xMWD7mWEYVDFIXVqV5hqZi06y5SBkqKfxbo81Or95XJ4rugVjqwifaqZWOnnOBhYfrIOxCQ6xCO/D9K0e7hkqaIjZWqnEi0lvGuolw2GTtjcj17x/P/8wPdPKuqGZ+rV5P7/dajmLfNRNGPp/ynq9PW3PNTEUtgwWwGkny/BTJSiS9YtGwR1yaX9If/L5fBAumVwTSP1FrgVLBCv4+vuQFJ8hn9eyLuHgTWbr0I2nn1UKOXhgSjqwShwP+raJ0HVfPmnMLHGz1MUM9Tb7t3UyIkj6ZvApU24plKsap8+9s+n+BxbfiEbKEpegj6o8Rg1YZuWddElrEAkCYRGDAgq6ROOfx7aqA3/6FSHVKkisf2BPkpBqQZ/Z4gUdoDNr2MmTp8TCa6Kwwz6iur+Qp9+By7rjOzcGYGxHk5q5uz+tGL18OkVN4IUBRryTqkj50+5Vshjb0+tnSStQWJyty7DVIqg5xTbX0lTJ+tAmmwOYRVIgzrrFqyKr1Nu2CrZUuyItXCSDrv5x9ip9+97X4aD4la9/R2Oqrtzh15DEIPZHjZq47L1hjGcUdyTgU2Hj42MbX1ki3zaFFjycNr49/8RKt7XiVR7iqztCRxVd4XbsgdpzhaKobZKaV25n0/Dpr2nAUI0lza8+m++vXmZcfKy+o6QSLfsKRh77v5m56fax110o9h3vetdA8AowxYq23Dbu1+JmA46kFDoh4qbtu8SYKXkkpKLQ8uEIMVTyZCVQRjs+CW0KcAtm+ddhdmefqDUY//Ri9eO4W3pS/cOSRgBMWSoukBFMfnbeKPa1/+nn1pXWj+Yi6gwGa4bB7VxZO3wTvEPf7B7hhOI94p3lvJSOjCL1tWnTTCzc8se8Rz6hMmde5GGXOmFLZemXhXpfFEiK7j+/7z6mrXDSCSV9w+eeut531X7E975JXyx+uZKUeH39I6nWrmKUmhTfJaWj+Irjh5EbepMQNov/+KDtRUEc4ZfwuusuIxOFgHezm5hGgF8lwBHUGF3b8+bhF/+nx7CbbothLrpCQIgqyEs48tp7jir/pNyO4Cu3QSIuPl4+4eL1wpgm36rxD+34TMnmPB5nyJ6MMF4q8qnH1YqQYmJlGEeIdiJI0gToMAoUUXLvFH8Onehmz6SCMdFzIA88Omwk4tb++rbeOfHbX3m3k6FieJt797OVSundvyBkYRdvtQLJW67XEqKw2rfvrLaRUwFCY56JplG7RKmAf25HjmCCjDJKjnhyn2Th1vONFB533br0UtcZ1V7uTk2e1ect3AKY0aK7c5X7YQYJZr5rNTCeX0CMbbx7utgNZHUJViszyUHO+kaWhu0mHxXRSpU8Vu8cqnj1jPmDiqvUfeUF4+2WlLtk6/83aJ3NTJrrcIG3XFQO5cdk3OhJQDVlnmb5EoygVmjylgykgBS2USCK0KtLrJ5mWFUeO+VZMW+67+EFHNeWhdBmRFWv9GDvtpme5VtSoiBoffs1yO11JSvEq3ClOyakEAs57Cs5QRP8GkXY7pSVKovAOt5b5fnSod1NvJa8Ye6edJ3tZ/uQC4RUeBSW+lYQotKF1C4bH6s/oUfstqS5Q9tIewTKIpf79Q0dhY/4cB8hrFtYRMMfhpU2WgbCpPyMjWNv++1y0AFZGY5mQme3RVTiLITi4deP298lppO+Llvi175+y/ybJakwhf3l0dFqp3r/41+V1lKNP1Y6T6tJJipgePVoMY4nuDJSppgbNo1m/+dULelPVSRTrTij/67YY19tEA+leyH/Jqu8n1XN2zWHrpAyIVpo5zVzs56fjufAM2rTvRWOMM2k/DM/cOxrgZ/Cf8EMzMVBONkbwN9TXGVXOGv9vb6d8Lkk3fksDbVQRIAT+r5xbdeq8Dq+XMqXOhnaumDn6h2qVF8RDpAFRmGE0aM7eiuSuv/0a8HQVkCMlxFT2ubPrDYjAc4If8sFYhUJbLaSBdONRLf4HIt/vhteKucv9OdtMJQfebljbqWjApb5CjBKLz8s4RVjj8wi5mJCfMR6qp0htPBBG86K+l/lcADjRhLHVN6R/p9ClcldV4dmGw4VMuta5/bnQUkhGH42N1WS1dt5VimT3HgY7xV9SwjOwGz2lsnrMq6f/zrA5hExYHTs7VVk4oLwkZQ5yo80xWeg6aIBtThKgsO13Gbx04kJ4QWorDJE7UU2J68USJ8U3XKPUH3XfmhybTOJG0+Af5d9kugOcSAacCa96wnLCs48Urt6YXz6nC+wNU6pnt28Sxtha2aTrzcVbfF1k50GU+A5d6ViAzTliJwEuRC2QJMIpacVSUaKcrbB8EgtU1eW8coNA3oEzo3aXx//lvC9gZfg4svPKvhsW9u8nT50AVC+3zjnloKS2bilQjvlBHwyN8U2bBp+pYNsVOuvQWuxMASrBJ3senkTCoQGmhNizbnuNIhXcmnff6N2UN+ZNpdNGsop1rVWOzyZ7uAwk602mobcZ5FS0AmptgKCxnkWeaYQykCCw8fy/zadnCzbaXb82vhr/5xIr5/2MjYDoA9kJQIRNb4KnsRqI8I67nGqTVgmgZC0r/SgMdceWTu5jt/4lqGapjuaPbXmFmAkKcml12JbcsHFTpJiTCCNCpxDFBsG3z+DTAF6LWLIVrSTf8ySNv9QIpoCLqIoNPwMUQQfz4lw+k73aeYT9P2qE2wln7XnrdLg6lNDKSp1/7MLMGebCSJyn+/cwdvuZ5+MwYshMgWqLY6kcBJqY4aenlJWvNLKFh6d1JWT8T6u2WnOss90MHUQRxQuqeyVPF+ntF16x/YpXhyPBcwJ4mqYWM2E1rH3kFBo/X+7zyqpS23BYE8NXAKHUSqHoAMVpfYQmvRsssIPzTfURCts6OCk1ql87G8WNOEEc1kQ6jyH3UB3vKqM2hhKRBY8my+auvVj7Nz1ASZUt5Ti8uap4CsmqcC4wWy2eleG9akwVx57TxYRRfDD8Q5j1Fth4+prOE2F0xQ+1FAQTqF188JtOV+Li+whe2pGnnqMVgKMluDGf74B1DV3tMIgeRC79qTZpSrcu8sG+g6YzMgC0l/P/yV/wE/eDW8zYlUm8EoSHFtEaS2Ljt2wlPmzVBX2EZgOdeIqb9/A0tNJEEzWe1Ueik5lb6br0Cml/1bZiS9BXKYainH+YFqvO1xtMtld+TNQ0Ta/f3U27At/csLUqGfLDZE8qHlnZeywLDNztmlRpYWQkeY5QuCw5imdf1xLKr0UP3OY5YcPlfV92HicWNZdfaz7iPIuQHguu2V2rr8pBw9UVNz91zj2DZPvFx2Aa5C9zam34+dKFFTPbBZDj/da4FE2nvesneQKmNvPEbSphAaqIzWOXN/P/NVyarzkB+82MR0kgYoSKU9wE/9e9gaOKZG3/wIvPrxQcucT5M5jGjeK7KEmUcKbXbSlutG1GRAQbJaMdtkT5qZclUdv+BNKSlM1BeElGVNshV0KJGQiRNE1zK5u3N+xbkAwS9ViFprs9NJqdQE1RUGt2m5HjqlUnteLzEbUDOrruY8Rnzsuq+0e7Wkyr5ufTZ5xUrGsxjCwnZRDrWKaVOluyqv8hP+1hN0EDcXEDKY/aVcoFVHPQ/e8juFkNwLQSKcrWPZ9xEnrrgABdEFai+81jCFIXgZywxuqrrHE720edvZ2ir88r4Z2tyCvYgK9yXyA6SObCVuQMiglNdvbKmjf3B1smTNBYER3UW0SKvegT/1MeRajriPAewcpx81aeISQdKVPo0G/CyNX3MfCdTTqOl1E6vChu9zAPbvDMFAsXN4IUmWfT3FAHKgKxemdfTFeaeCRsuWdw/LbTrtc+q8EVWLJzchJsfkUExZSbLB4e8Pg61H+81ATGOkUek/8o0dwcxLD6BgR7d7sDzwqeVIq2EVkONXg71xZYIxPDtEvFObLUHuVQuxpIyTS5sxq1aSoH38I20EvCEw1k1b6W5aKiw/fuAapT0XctIf8Et32aMB0ck3noacuhrQ1ymoIGayPw51rarXTKdf27J3Vbv5UcPVx5VMnBgYuRyB7CEAmhWQtrTl7vnlULwBClqwysRfYV8VUEJvYADRm1bbL8x12hvEnBNvFzJ+aFi76IwdO6jqXX9354fhKEiUDQNHPW22uNoGks6BTxjw1CF4q+jYw1ud3lAwGwJ0CL5whrJMFx7hfJCSUdBCYLa4oVWm7l8JNAP8IxIU7kw/bB9AUE0jprc8gpfUvxDtsrh3b+CNxnbqa2wXTYFjHxAqF+5ngl9l6uLe0Ks94LcUHFYexnc8sUsZe+eeUfSIbEpcd6CldasRAbk0aFTq+UxRFJibCxgvlOiRORfygd2zt9yVZ2rdnLx2zIXKWV80rJH7G4EZgGLyRnGC1d89+LWud0biTdIwP5PKfREe1LPPPnvA6Dt0c7s6Zexolb31+wYI4BkHqM3yUjb7HoZ8duCc/u6xYljNr37IVBm3HN0bcn6CnE+t66MAmDQfglLOt/owNzc3N4B5qtQLrfI9zgRkFBz92Ns/yAKfnJI5BW3KUsu92LCUdi8gJ9j0WxmBBs+VuvvJS75tbiko3WbfSCm3K6Jk3gELCwuSqI4V7vQmqUxSWCW/QwDDsnN7PzoH5y5SqwsBGtCXX2274qFfTwUurThJFHI5tqu/swxzjD8Q9TZJ6qXs24ZRqOBqX8L5NGE7B6WuVM+U3t9ez3OhWYgH5COekJfhjUrlunNn4I16x+fKtgF/V9L4MQ2S04pTUeuP/ss1A7AQP6UXk/OpHyK37GMqWM4TCf3NXoRyXVAQunjvaqACrHhlLgxKTvvxh+9+HYTVhDm8oCCmQMP02Oi1OWmKG4zS3FPGrYdbEtJUQZ56DIx2GTFp3dTOvTMJvd45SykqaCHs80JVffEDI5ybm5uT7kOc+KBq/Q/PBMpmLoRKHSadLxPmIUggFa6MwCWbf1cFesZv+NIuzN80oB/hFjZ2jXsfjKx94bc6FkI+9RaP3O6ttOxD5d78X1hYWJCExMOHauWjLBwxBU2WJ69N6zC5wn/UapKv+DMX8TTH+gN5UKzKJF7AaxVRkkbRehfwsWNf+C1ra7QQECIVocq7vJW4c+fOnZIIWm/38hCwKvXmst4Zcqof4pcFDpGlwha2lODqlTJ2trbvbDWk9Ar3bmS3CprTftuhn4ZGbraCt/g70hbcgAAyMX5xVVFN3vXNi3fBBRdIEuYBVFS5yeXvIdfMe9dcEGIkW0P0creUmalTHEb7+17ngHrij6ovecpnqU3Qn3aRose+flR1Y6uwm2hlPPajf/zPo0Jhl57DbnEYVTg67y1L6SroIijnKh4mrl6PEkj5Kme57H3nY88SE5UGtW2iKGkuq7G+ue6BvSBAw/Kx/5Jj5EnsBRdcMCDj8sUVxtaYeBAvCJhQHvQ3DmuILAOD6VEcug87Fp8DBjHRilP+xkiMYpWbnW+bYDatGM2KfNf/QeTmr7PzBijomWRlXXEqjWn67d4uYEn+A/+lpwZWeIJf+Fuv3k5BhhIN0amTdUHxzswj5RwnCJZjsDC1d/xaEhcTmTjobc93/QbIJ6S5YoeepZ/dHRkgAHyfKzrPLlLRCs/2xRya0kxZKmztsiGy8kQKDD1djKZ+3We+YjwHTFMRimN+f+pExcEqkCIXFQS251d8A6h0jDAEf5iTQwEFfaR1fT6Ik0f9HXH75wIifsKFpCf+RT8hQWnOBUi4LFqGx0UmbxVfIlugco7rcJiMzRZE64WRFMzliIjg81tTleKFyrl3cWG5gFCPGGWGMZ/56wqEgNW300/qz6XmIgEw4EwfsXdeHR79tb9hJhKowgf/DCQHUI3nihMlD/qn7uuSfKwom10JaOS9Oe3w1pwArGAGDXwQ+MzNBYwlspXmUm+bCBouBhuQEZNE9wYUVNBo0tCERZJoxWdL9VQ5TybGzECC6dMj6Yr/WgNNI2EWEc2TV2vL7CjNE1xgXR6M8GpdWAiQpCv7mk//XbNTAvtC+57gS0c5hdlGDgiZahwe40TvTnCSH/szJ5hjX3+sgC72HFsXSvPSkscHk6+xzzrsPZ/bomdMA9zAyOZ20UPoAc4O9Pmar/NMCKpwMaC+o89VXhqYUMrWs0M+0jw0XtgiQfF9Bc+V80ovn5MwzYq7FQiPJcnOJg2ZwChEOhq/1hCsNOuQBj7LCGQC97znADFy+tUTJvPp1I+9tuwSbz2m1NkWMn3+xr/1oB574p/8y5hPYwYECC6u+oZGOebN/gQqXjmXyrHzVHyXL6Mzcd3/AU2erSCb8ygiqHkcYFswK2meIl0HRNLYmWfQqTCVpBqXjnjjUQdIshYDQPC1H39QpL9H2SApyDQ5fXSFHxbw3/mt+IW91rssG39EKZWXMA8UBSmS4gR/9RmrtiD0NJcBSZo8PKh7aDoggBGMbc4pdehLAW90d1eNmAf0Sax2Qk2oP3qLN2iI6NewHNMR/yQBnr9PjpEtfGcTsjqZ66/+pKolFC2tsGUOoO2YgyqI6n+QPzCMWnTYvd3+N6TQgKD0IcR6FLjxvH6XDgi96bA49lAXU7biFtOGLszlgGZIVL2zvjl6de0gFpLmbUnxgHNkIWTtv6r3S30j5IY/b1cMO0Md5hT8CZRz1LxACOkfEp0vHTafAA8hRDl9EbCrJhFxf6kd1GKSS6MkTdUmSncucJ9SZdSkQ+/sLIsq+4SAMAOT6+P0YHWARnUuZPQPCah1qVCikbYrbcWxn3Ry4Zuku1jFqO5Xm7YPagcxnVSQO8Cy3+MZgoI0o2c40ep6kxvcWUlwMiQXf3gq6YwXoKu+V9dCiHUbHBJIcJdSGSIkyYagC2vTq8B4K2ztqRQQ+NIlA3TbTweEkHzVfvjL1MvNasUQQgjN2kb3kC7zPRvW1ZrnDOzz2xaGwyRYqFPdJsGqH6bGZ163gppKsWG2v2NK0sPdhXXZ/YYhMln1adWrK8wzd0OyIf2hvvl0rNON/vgmx2wJn0AAmdz8fzZ0OCw7W0dUN5dE3rsBop6f04aC/yk+Uy1Jx18ywUgqiFC3uedfAy75GulJ1QVrQiOXc5CkaYd1CsOEhuJTQbTZj2ubOloXlXgPZCANCpYS7rL1wKc2OPPASHApHyBrpxcMvaOaODnruIf8QkAvtfmot8LioSf2usoPQSqcGArF+TqPaNfFAwTKPWHJU45vlLbh2sCjjzvDU4diojnzui049G3LsBADYW/ZKiQ92CfvwOu/rPA5Q6aLGsF3wvlwlTkwJJLYh/m6djzmlXXBZn8LkfkAbsPgkCLT8VHdk4+ug6CRYNRf4bkjTxVvf7zfbelCQGIfeYXnbVtq3kE6/2NvdGYwJK3978ilMnIBIdYpboRWfLjXKzGywoWWnCBjD2EVwhT17R4+wjdr69p35mY5g1JdGx9cIqsfXdWLCWUqXFV/3rrg6pOpBdOYzOz6p83TxTEzrZK0eZcuRvw5AzC3+eOmm/GlgeZ0FrkTSgYeVWqDH9S37jeq7jWPWEdHX3Hom7hhoJKe/Gx30uYkLcaMYHjUAsv8i5VSO+Bh5QAF6VSrodd7jWi51e4jm6pJFNuTsLEP58nBllFphEo9PlKl6WB4RJnBxFyNqfpp3zv4TZ+zAh2RmFUx/G1BP7uuWJGuH6DMnjMElU3R8pcdgjQDzSBB5qG7Od8yCFfdsAS3NbwL584uNDtWbZJu9yfgPDFYCHRMtY3R8pfFwo0sInK/+Y8gtKvcttQycOof4MNcLdKEluEMRr0j3E/N88sUdtV90pImJvpFtW16ApEPEG0Dc8gO9iWesbKUZ+uBOWI89BnXfB0i6Zi71jN7HWADQPMRSnMOeYl2SSsGk0WP+JKwdhW7KxEstOQj1+BPLQWHvfMVcHJpA8s8T3nslk0vJFknZ93ROt3V8AXBHXG632rdbP4BaIL0JwACfISJGXPVWjiXb9u5WfLC1eatOkJU+0hSadM1gIJItxr7L/rh7QajvEumdkJVm/4PkPSKQubqYLvN6hUliqCsT7SeScsuj22GGgBpvkAPerI9AGJjx+sGYQ8ai0p8NUyu24dueF1TV0FIU6hcqlWSXAytQMjaTc159P/NgqwyGpBJUH3YTu2cbVEQmKznxXz9veMCxVL+5SfrGOa7Bk2iwSnX+LF9cIdQVNUl+DW9vXkfZir0m9pQYesY8NRWNAg5zc0px+6OmRPKTQlddkNZ23TR2CVarrH1kmFmSfnvvJ4xpu+6GAQoem9LK88X9Ba4MjsrQkE5CQqr0++Ytmyj+aCkJU/qp6pV0vcDonWeM0AjNFt7Y6b+z0janENz2eTEgX3r9C5TC0aeyQMMTxZU4/Qpaxc9QALyISjLkV4ksG7kPcoLSz0OQU0SzEOfZDSQ8XmwP6UEBJJ+/ktkveQVJLPk80BvzAp2OXhvQD5k9PitzfOtk4/McwMzxwpWrTOvOr11b4/CyMyHZpi15B8IldsY7/e62e9MkVMKKya3L//6DYulkSR5KdMhECDw8Y/8k8DG2GSEAcrvCcd21hYYbZ9sztwyuNXWfAOBy7TqvP3DsyFYK947cyVDf7NPB6byE4lwNsmtJBuzEyKXFAR1T+BcwKpHjfUlSntrUKEtn3sIdDC9Fn6VDddAq4mujmuvZ8ia+0q0ObdeqBIMkvmmGufdmEBbynNDswa/yzeC13rN+uVnp72e3HhOBeFfc5jE5+qwOgC5Q0Aqh/EqxfZ8fUl1Hv2Qmi85mgKqlzieo5VWfjj3dqfMwrhNQ54wCBFKA+T3xASh8CAl/KWfYVGsm+dr3UtRTIsPjx/1Z8rqGoLhe4E6vHgairMF012SL7spiqc6L4ZYJX/k+E2pVc50ZQySCUa2jfE+zqmzk9aAmTzebbdMGEYvBjbrDxtW+VJfQLbnHAoXEUSpnUthz8np7s1gndm5GiwjnLab2zsUZBlO2cyn4DwHXNWKfuFCS+u85TtbwZWe4p6Un7p3dy9wFDzyfRJTm9SSqEdA437AVChYS88pJGqqSjNdmgtQ0ohyWb0LNZSywmpCQ9KFNbZznotNO9J8hKZaYRITroqeyt7wzpRWsFibAA7PqajpW64iI/c65JhEWllCUuJ05FQd6DTHoagJrqpNV9eA9H3pf2AehO1ZfaIyTa/mQQ315iXNoKpeO5/XNkxX2Vdk8+3SSvAJlj7/YrHigmK5Z1dE00dWkpjmHIYnQDkxSzbbAnob4O+od5mEdfn6ldFpaCLUsVgdOLQYGKrqBTpNkCp76ge0pxH0BB++weVYKjBTHucnm/WkRZk9qeMjduyrbwniwC8bsmqt7xqiphcmVkzpqeDSmVXNq853sS4D1Xb1Hf3TTA0mLDkRU66HwnS1VBB4E+PCf/7nzyOME0TXJ9/WBzbTCTK5Svn5pf+h0WGi8ydvYX+hF/CRCdUMbBM/ZaQT+VJJ5ajqUUyCZaPVpcMXg8W2Kb4xVfY6ZdWHd6g3egJzlAPyPalaWFjIdLFtorervhcuK9B4m8vaOtf5ZWTOHyYqZYKY7uoav+0PTV1sdl/s3HHzKmnjf//8YahPCXew8LTQ6km1OxT+zkpeGo7VnLL3wxby6tNlHoMxdswNZpAnHeOLgy81TOqftWXz62KYUou4mKjnQE3R6tOv2wemlYKjj3Q+TTyQDKw0XxwE1BOQj/gIrg3Q7f8/kpe8C9i7d28OXUwdvng7su5QMZGvuPHRlomajd1jq/6UtHHvAiJ2gGSRZKaTugVlSYa5avShA7Y2QVMLhKJ2yuyMG3bQst3oTPsCN4b5v2pbOcf9c13/NCaLAFhN0VEQ6JLsMumf2Jx764587GJf8NugHptLATUg1E37dxQaoavdtPJPvehlA/Jod2ldeJrtBTRDouKmYoE9MvMh4eUf7MP+naRJeDZ17ssk4FtzGX7Gns9FSjXu6s9WaYaAV6wSXcVjzoF8jBigyTbj6uAisgy7tG5BdNvuVu1umfrLwW8+Bqv9doK0hay7x0be8k7TfH+vUiAF7EAki84p0poxvhR4vloM1YZIv3Nyn1ixsiC5BqdDxPcv/7Vz+ef8bxeRGA98RMCnwsYee8hvX7tI/IneKiSppL3y3B3eKwokI+N3SvPvHBNVsO4QTJOgl+2lgi3riIUtc4wJ6QPV9KdilymBy/Lz1+DQWXp9YyQdf8Kyn6r0gAGS5i//tZtx97NfWqfofAFiRDL++nRjd6sQ7taDrei104iS8WN2NjHzePvF7pjH6b8qSaS/PEtsdI0TOlUGj9yBP9VRsbApmbNiacmYkbQR+VKULfRBLAXGysMmRmaR/3trgGFQaRJPkJ20Jg4EqEU2mxIsq9iyKbMSQTIm558tTkJPm/Q0Y2BeLwVp2np40xpoygqzNr1W9O/2rde9W6oH3hv+xNS37ueIj90qwuT7jhovYFNMYyfUIvJMo2qERjX5fJgGxYCKtDZ0S9NiCswE7QbHr/BXnv6na5NWgENEYn+4GJuXMk/t9RuX8ZhMO73zgHwyY1RVDFbHriagBoktZV+qDmRjPnI2ZirPO0IC5jNy83ypG5C1ILN55KYDDoaKuAzfJPW2p0WHthCUpFnizbJdvrvapHIgYkRCMGKb9lDmC40gJT4PhhMAxFGMCT68TWjV2/Bbngcjm2z8+QQtb30knGNWHrHx+6kmBh21bP++d6E2w5f6c+BP+x3XbArny6BjBo8Zdyu7v3tKAGoOq9aFkBEJtyXJ9i2fv3dwQDJqival/9Um9c+REOLAPy/0deUev73F0elNyQnz49OrwJZDpOWnqxojFzHSwTXFEz/qScyTh7Elb4WiP2Uz4lT9ui+R3Hq+i0PsMFCSXCYxV6Aow5Q004CQ0/APBjQ2LLsMUmBubi6k3WXi/mQff/2vUYvk40DE4KTdnnVJuWd9lB8I6xEEnzuwBR5G4nkj1PQ4OufGuA4z9dkqhJ0xa7vGtHy/vjnNYJjJY3L83Pdqmy+tlikJy+xU2Fm1yfojq/WWtHtxCFzAG9r01UkZFgfEGzhMA95w9u6NaMn5PXHZt89tkQpXIkAAiL6h7A9xf0uFOtX8QeMPvB0ADowrjhSS7ep7h7ZCWq6egcdizNL7E4BpM86eLnVEsiwVK3dVPsvbOQuKQ6dfnEzOqnTlR0NxJt8yYCIsbbuhLKClflc3ZtkLxCSLkRLXr/rznp7ftUdjMTq9Byo7CDzl2dUlE7+zJOkjE3Tuy6Jzie6tUHube4kTl7dUfdRuuAqbFYfVyWNyCYKmEgfjO6AZRjQBqr7yjfPrD1Iqsw9BdqVZp9E4FRAVAE9CUjmm34UC+glaQhKme3z0Lu3RKN+G/3iuJMlS7Zi2sUM/B4rZKSlZSTLXAlMEv51rVBRCqgRcksdP/tUvQ6otTe/Wnr17UzAh8LCSnApvQMgoBuuYxg+vxqcfHt4aVwCJSca4qTtP+slPSx21Jn/n3fzn65OF16ykB/1Lmm70B1aJmR11jBi1UxW/ymvXtnknBrOlAmaeqfe7hFAZi7XkHLCQYsieX60XFd3CwoAJ48zltAZWYnqcL31v5Gpv/9q1kjCMeIJGkF5uPITBpjXQLI8DDUAK19+1fyTpRh/9G0Mr0zqML6r8NV8lNul4C3MbpBOexZPYXi9rOkl6nP8A+QVndev7ncGm2ehFJZfWoqpvXe8Mek0pTGY/5CdIU1qrvJrvhF6CBMtIiF1chZ41XB7wo/dsglOKPwvUJEHBS/zzhFm3s4BGSSqcLQhcPqNh8vDqZzXpq38r8tTF4SjTIcQI1hMEzTtTRHuxyip7TIFFDf6KbwCLdRSWnxTHJun5pCfv5aAzvTfF0lUZ9ntSs3dvAHkN95J0woMmHv4RQRj3AwmSM1Tgeeg7/i4Nk6J9E8gJXp8gNQn2vRb4JMjVLzg/8DjfCZYKP8oFFRbByvzl7sLiEaRycykydj5wbP+4sungDUxgK/xU4HwQ7wh/guVLFSfNlrM++QxIuMfE2d3hDPIq+szPDPzhz/W59GaT9JX/2ufCn/Kbv3VPGVGUSorICKgKG8v7q/+259eBcGgUK0ky9oofHEtiVZGzTvyghF3lOOjeQ4MWvc+c5aDF+y37F4VqJBdHBdAEKIoganzCuSdFxbwb5rSAQQS4PXNHOXtj5XcOCIzKHLSgN00CKZbjK5ergEmQ5umkQuDXel5vNyTKwdEQT3BJPe5f34VVgA5RCYIIuBPoCl1r5ocnDiBZBbhGQT9eqZE3fge5tz2dtElXQaRzzb+wmPJqRetwP5NoGavAOZZ2U9av+tef/9+jW2HjAYRWkaZ6sEW/NVRSJGATP3sE/a/hUMRhxQl+j7eqXG77kxUt4R7r72ZzQDp/2yQ9MZzw1AmwfPrYyOjyJKsgSY2cPrPhzOvl7nLTE3GFOzf1owTB5HQusMVy/YyvLhNbbAzOmxnIM94pb+dNtgsIveMdPvdkWU2bdx8hMn755gCMO4JPkTBs+GFTKPzLZ6Q5qjHmeawaNUlFxYixgVIyrJRiruZU/V3o3L3b3e4W8rHmwa8LSVo8CkLvlGaZ0rRpvYsMCaHo8Ag6TJVqgG5tG94xP1L9myBNnO/Mi7VNEBuMKUZBicD1VFvKYOGC0AN9kl3MkXIXU6Yj2BM46GOvM6omTdobo8NorHyAKRLFglSX8Dt93e2WUSYIU43QDy6xIASrVoh/gzd4g1Crpz84SC47PbYVqyJ4jtmlZMxSj5EKtR72xo1GZ8ISxYDg/tk55OOijTmfPWYokCS58OiUmHlzicvJA36WGaYto/sOqgpzk3uHhcbsgwxwC0Hr1/nUhSEIc2h++uDaX+c7iSuQkiRheokPNva/zp3pqL/E9hOqCJk+5D5GU1RWcrGk1IEBEh5tkw/IIu0eO7+7ucx6AsddsGkSLEOKEfv5PqoReDObbRBp7aokT8Z4Cq8pK07Vb5VuMsoBmQmBh5mkr/1J8Ce8dt28nzyBnYCmSUsu3VY/Sn59/d/xqvFuBiO/vL7JSq2Szl8LvyFnbSEYHoRIpqbvv1kJ2LmkJ/uaE3LpOzf3FPIYY1FB0llOJZFoe0ndPXNR75LuUqWu2PZK1wxtGXR9at0TkHEakvNJX+VrT/DHvnpzb7nEi9pOwAqSPOGYKUGl0kMeUGYqa4FOZCWBwIeVxWasvLgPPX7vjTVgEvKk4KSP3bId1SAd8sYJPeF6bXcewp4DVSSdZdXmi+zC5G69da1nVxNWPoSdnGRdJHpZnEmZ/2Z/5GW0bjui8WNEqKokWXGboc1zXOBDCMPt7zCArlqkr/I33gL+yN/wb4ambnnrpEGsJKnzYcKoolXMWhXju28ama9nm8N628bNhuPOJlM4D2Cx5NKMjj3pxSf9md1+aNtjpEGxmjywXSNWvv7BkmXREdGALD6AW03qoKlceHsqxJksLVBtEAOQMaLOqGNqKE4v2p8l2/TBTUeLVyCh4FMj1dSVu2w/VITim1STdciLTdhNK5G0fWj3uFL/5zVJgvHpkxsvibuuHGHbgQyD3VkmfU4bSWtfd40PQ+VbF9MHK32jf3cD/vBfJ8DEb4/i7+3LcR90bT/Euja8YrXFcinRNaANUJmONmoITEAk3vCiPmnX6Z/6Y+Sw73w7jR4XqHOwcTFH+CCy6GbUGLwLDJejKL1tU6b3La08fxPrjp/4CtYodMQP/9Cpgl8uqFKhx66Yb0c+jYwKoJW0h5Ljh3eYBpz6hX/cfIkfffcyzLbQey8/vFTb34DBk68dCIcf21Uk5zyOmIjniu8HKkKFBWfJzNI5HgybVj1YRcrDUVQ6ErgdkYh1i5UkE4UzH7tGrm9UEmHyJyRXrvCxIZImXJE259qhnv0JxxqkaqnxU/lhhO3JQ38fnHVkMghZN3FxIV2bjogcTC+oh+5SntynA8zGSPoRv3LEys31nchRb3ZbKO5png7XFtsT3f75x2O8kcggkO3bKdV2FvHW631IJY4Q0yRJfoFwGjqUrYuNi75BbprPnc52Rat+/DUIIZJBhkQPve8KUpOm1sMXN1PI2pDLULnutwKjWYNnnB2kt2FO7DCsXAwMXJN+3fZF4xsowAwS8rcYnGCunotKFeEC9gZE5w5ENE/St7oCf9QGeatLY5QJxpTaSqJ4oCEObTsjFpgsgsESeyivRT2iPaYdEDKZ2hY6rQhuPn8MbsXyapnehpaP6JnWotE0NrpIAK42TPf2RtMTn44ghwiWNa9O3vd8Xx3neEUoSj3/1NaEe+eIdngp3x/Z4HOpmE2ZliKh6KJoyGMIzwfIYh6gnnHwmO7tjvwGni+1mkOC+rJ7B+isQZtvXPvkCeU1QrumNseYlsW/1Vec4Pe922LFfskUl6R8M+JWEiUST18YYpmQCxxcyVcwE63t8Fb41qFmkcHAvOgfeb0r3zm2zssy3odEZW576jVjwyG1tF0y+UwhScTQylXy9khHfh8+0ywIc0iWaWHyWDeP1V0uFef3JUzvvaHZ0Qhh+CWxoyGz+dkNOeT7vfrfrmCCyaxbt7R9vv7zOMT0KIuAS32dxifbrqndN560SHIDA3J6thwcq4eM/tGK7889t54YhAi0W+auttcdzeBFWaRzeqMufFHImfTN/9GPw+/3qz6oFNkR0p/d366f94JNvfXSDTgkFJqxYnuentq7uej7p8VbsjKKSD/4V92vOtXDPVJHXK0zgFxxjBZvxV/i8KFWbcdN/4fFPBL0IU9PudyS92XpSvOAppLAh35vqU2gp0XHbF8iMxkeNnmAKACp27cP2J5aMhboLFN0o3LdkTedBn8wxOmbD1s37Zrc2FLs/oWZ24EC2L73GYexTBLS5ARN3NyygZdB0FhGgolzSFTZ5IsvtJlty7XGf4mvuLzr4uY2Iq/0kWf5X/GgXwJ/YGbIgUWndZRJ+nDTIZd/XupSNU2YgEnVBmtDonML3rbj0c9fKukbzsQtmjWq7vKtuNo8YGnGoI3/CMtUDVBzCYQuvUW3iKkjvy+sBLPGI4+vkQv7XRbQ3YLHPH+ZUn/DBW68qLL+AVs7oH/Db2DOFNRZuu2lc0l6IzpffGdiNzDcpelzv/v0n0/0+H/leOwNiaiZ2rmxB1gNO+bayzBTHzD3hYthByTlXnqR9V/cL7uZgtS/huJSNp9N+icuxcXc4lbdlwPspCVW7r7RBKIhuQS9SKOO2b5YZqp11pe6ZqUPUNn/uS9x2/DC9qfTDHJXYXJgOJ8ky0wzkzT2J/cWVy40QRe/CERElsquvc35Ge4nH351v01/7M6bOfiKqtFTaWZze2/NMCf3dEKOwa5BIhN1xp9Q8lTvV/Dj/yDLW7zexIim5n0fkWLMnpAQil2d+ppxzLe9SGKSHcZxxBZkFlUjzDr3r3jo55JmnLeEbrNTPf7VIalzmTCKPfJ6o8s35hIdUG///o0YgwhGEfJX3b7f7mBd1/pO2GW2DbZlw6gDlAVGWrUuGUn9XgvRjLQbu67JJBHotQzuK7eVfcf/Uw8AkSTKKiIRL8C7jm/1FeBRFzuVYntlSXsbKStQ26OaXQYs291190DNVIHF6J8uWQS/Jt0L9EgPgUCSLPMrZvBdJaClELIZKqk2n5Xz7X9uYKVrfcUTSCuP/2tj39LA6BFGiCHILqp2oJoJHb85GZrJrruLUtiiqQYQ1iPB9NhQO8Bydr84Ep73kRff51+ft4SO+bbXSkyGeBEy3qVgHUVnIxkVQ81l/d8DjJq4D355Olwz3G7LotrSb2GgJlmmZc2BSUmw4FlXEEaaDoCFLzulwLR4udwHRM11EZAqpPVUM+D5VQ+lehIBo/V0SCEIJEGd2R5UkMxgfaINFNt5h+EhuMZ0riqsgja8BmpmfHDb2L54EnyXOgRMT1dL0uQL65NLQhW5jC2jXRJQkFywawgJH8p9VvDG13A0c4bVbdd8Mf3kbqN8uvtUjEgaLVu4I31VVKTDL5IEWWokhkMqH3l9hRehmlnvHzv009KeVAHws8mq41MlbT6/xsVIVXK5JEnlsuodQQNghfpe2sdqBj4LeaW+40TALMhluiuckzS+eaM6SFeijJfdfggvibPThMVKbZguVwm+nRTN1KHXzjrQrjnk6iq1nSDkMGpAXRKZtXsqAe7M927KSzrNW6zsq+ddkKxyqfjJfcua0W88Ao/+gJJv1nHnnBmdA5WgFiyV/6rbF0HVuMtMBebH2Fa9dgDXHYBHXR639C5Odj4cAyNA06D//SX1atzgVzp4yGcvZiRtuUEU8LkoFlECfwtdoh3GtcBrfMIa37J1dYCwgLUJQJ/ea2NJT3J9+mGmklF/UNLkaj2Qc4AQRnwoQ3K23bivSjual7pCPhNtltrlzXaM4acEOusckATckp+V+nyVJLNM91SZNTPtUu9JOd3KDv8ATzuor2iZvYizEQPN+0EgCJUkrrYIaq4CdKx03+8BMkeU+CmvRlJHvDPdWETrCTC0owuE/qnNpaXhG1LwUJKKDXNDIgloBXckiUEJbAYIPjXzd2CQ6HPpGcvWt5lJ7TD/lYEf7ydhCdkHboLLrM921GAZWhBpet6zpstmemw5U3pMHn/yFquPc+dFUDviXblUF00tHV7gLEhDvVbwfyi4Tzvo3+mLX93S33HP8LJKsE6yS4yPuJWNqma4" alt="Logotipo del CIFP Zonzamas"></div><div class="nm" style="text-align:left;color:#e6f1e3">CIFP Zonzamas · 1º CFGM Jardinería y Floristería<small>Infraestructuras e instalaciones agrícolas · Docente: Beatriz Socas Guerra · Curso 2026-2027</small></div></div>
+  Fuente: apuntes del módulo, Tema 3. Equipos de filtrado (UT Instalaciones de riego).
+</footer>
+
+<script>
+(function(){
+"use strict";
+const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
+function segInit(sel,cb){$$(sel+' button').forEach(b=>b.addEventListener('click',()=>{$$(sel+' button').forEach(x=>x.classList.toggle('on',x===b));cb(b)}))}
+const fmt=(n,d=1)=>(+n.toFixed(d)).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function rng(seed){let s=seed>>>0||1;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+
+/* navegación */
+const links=$$('#topnav a');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id));const on=links.find(a=>a.classList.contains('on'));if(on)on.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'})}}),{rootMargin:'-45% 0px -50% 0px'});
+$$('section.sec').forEach(s=>io.observe(s));
+addEventListener('scroll',()=>{const h=document.documentElement;$('#prog').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'},{passive:true});
+
+/* partículas */
+function part(t,x,y,s=1){if(t==='alga')return `<g transform="translate(${x},${y}) scale(${s})"><path d="M-8,0 q4,-8 8,0 t8,0" stroke="#3e8e46" stroke-width="3" fill="none"/><circle cx="-8" cy="0" r="2.5" fill="#5aa04a"/></g>`;
+  if(t==='bact')return `<ellipse cx="${x}" cy="${y}" rx="${4*s}" ry="${2*s}" fill="#7b5bb5" transform="rotate(${(x*7)%180} ${x} ${y})"/>`;
+  if(t==='resto')return `<path d="M${x},${y} l${8*s},${-3*s} l${3*s},${6*s} l${-9*s},${2*s}z" fill="#6b4a32"/>`;
+  if(t==='arena')return `<polygon points="${x},${y-6*s} ${x+6*s},${y-1*s} ${x+3*s},${y+6*s} ${x-5*s},${y+4*s} ${x-6*s},${y-2*s}" fill="#d8b56a" stroke="#9b7a3a"/>`;
+  if(t==='limo')return `<circle cx="${x}" cy="${y}" r="${2.4*s}" fill="#a07e5c"/>`;
+  if(t==='arcilla')return `<circle cx="${x}" cy="${y}" r="${1.3*s}" fill="#c4683b"/>`;
+  if(t==='prec')return `<rect x="${x-3*s}" y="${y-3*s}" width="${6*s}" height="${6*s}" fill="#fff" stroke="#9aa3a8" transform="rotate(45 ${x} ${y})"/>`;
+  if(t==='plast')return `<path d="M${x},${y} q10,-6 22,0 q-6,8 -22,0z" fill="#e0e0e0" stroke="#9aa3a8"/>`;
+  return ''}
+
+/* ---------- portada ---------- */
+(function(){let o='<rect width="460" height="360" fill="#24433b"/>';const r=rng(5);
+  o+='<path d="M0,120 H150" stroke="#7a5638" stroke-width="34"/><path d="M310,120 H460 V300" stroke="#1e88d0" stroke-width="20" fill="none"/>';
+  o+='<rect x="150" y="50" width="160" height="160" rx="24" fill="#cfe6f5" stroke="#1e6aa0" stroke-width="4"/>';
+  for(let i=0;i<9;i++)o+=`<rect x="170" y="${66+i*15}" width="120" height="9" rx="3" fill="${['#d9433a','#d9433a','#f5c518'][i%3]}" opacity=".85"/>`;
+  o+='<rect x="140" y="36" width="180" height="22" rx="8" fill="#1e88d0"/><text x="230" y="240" text-anchor="middle" font-size="14" font-weight="800" fill="#cfe6d6">FILTRO</text>';
+  const T=['arena','alga','limo','resto','bact','arcilla','prec'];
+  for(let i=0;i<14;i++){const t=T[i%T.length],d=(i*0.35).toFixed(2);o+=`<g style="animation:mv 4.5s linear ${d}s infinite">${part(t,-10,112+r()*16,1.4)}</g>`}
+  for(let i=0;i<6;i++)o+=`<circle cx="0" cy="0" r="4" fill="#d6ecfa" style="animation:mv2 3s linear ${i*.5}s infinite"/>`;
+  o+='<path d="M380,300 H460" stroke="#1f2224" stroke-width="8"/><circle cx="410" cy="300" r="7" fill="#7b5bb5"/><circle cx="410" cy="314" r="4" fill="#9fd0f0" class="drop"/><text x="390" y="345" text-anchor="middle" font-size="12" font-weight="800" fill="#cfe6d6">gotero limpio</text>';
+  o+='<style>@keyframes mv{0%{transform:translateX(0);opacity:1}80%{transform:translateX(170px);opacity:1}100%{transform:translateX(175px);opacity:0}}@keyframes mv2{0%{transform:translate(310px,120px)}50%{transform:translate(460px,120px)}100%{transform:translate(460px,300px)}}</style>';
+  $('#heroSvg').innerHTML=o})();
+
+/* ---------- obstrucciones ---------- */
+(function(){const S=[
+  {mix:{prec:14,arcilla:8},t:'Agua de la red pública',d:'Agua bastante limpia: pocas partículas. Puede tener cal y precipitar sales en los goteros.',f:'Basta un <b>filtro de malla o de anillas</b> (120 mesh) en el cabezal.'},
+  {mix:{arena:22,limo:16,arcilla:10,prec:10},t:'Agua de pozo',d:'Suele arrastrar <b>arena</b> y limo, y puede llevar sales que precipitan.',f:'Mucha arena: <b>hidrociclón</b> como prefiltro y después <b>malla o anillas</b>.'},
+  {mix:{alga:20,bact:18,resto:10,limo:12,arcilla:10,plast:2},t:'Balsa o estanque',d:'Agua al aire libre y al sol: <b>algas</b>, bacterias, restos vegetales, limo y algún objeto flotante.',f:'<b>Filtro de arena</b> (para la materia orgánica) y después <b>malla o anillas</b>. Si hay ramas o plásticos, antes un prefiltrado.'},
+  {mix:{bact:22,resto:12,alga:8,arcilla:12,limo:8},t:'Agua depurada (regenerada)',d:'Lleva <b>materia orgánica</b> y bacterias aunque parezca clara.',f:'<b>Filtro de arena</b> y después <b>malla o anillas</b>.'}];
+  function draw(k){const s=S[k],r=rng(k+3);let o='<rect width="520" height="320" fill="#1d2b24"/><circle cx="260" cy="160" r="150" fill="#eaf6fd" stroke="#555" stroke-width="10"/>';
+    o+='<defs><clipPath id="mc"><circle cx="260" cy="160" r="145"/></clipPath></defs><g clip-path="url(#mc)">';
+    Object.entries(s.mix).forEach(([t,n])=>{for(let i=0;i<n;i++){const a=r()*6.28,d=Math.sqrt(r())*135;o+=part(t,260+Math.cos(a)*d,160+Math.sin(a)*d,1.6)}});
+    o+='</g><text x="20" y="300" font-size="12" font-weight="800" fill="#cfe6d6">🔬 muestra ampliada</text>';
+    const leg=[['alga','algas'],['bact','bacterias'],['resto','restos'],['arena','arena'],['limo','limo'],['arcilla','arcilla'],['prec','precipitados'],['plast','plástico']].filter(([t])=>s.mix[t]);
+    leg.forEach(([t,n],i)=>{o+=`<g transform="translate(440,${30+i*28})">${part(t,0,0,1.5)}<text x="14" y="4" font-size="11" font-weight="700" fill="#e6f1e3">${n}</text></g>`});
+    $('#micSvg').innerHTML=o;$('#srcTxt').innerHTML=`<h3>${s.t}</h3><p style="margin:0 0 8px">${s.d}</p><div class="note" style="margin:0">${s.f}</div>`}
+  segInit('#srcSeg',b=>draw(+b.dataset.k));draw(0)})();
+
+/* ---------- prefiltrado ---------- */
+(function(){const r=rng(11);let o='<rect width="480" height="280" fill="#fff"/>';
+  o+='<path d="M120,40 L120,240 L360,240 L360,40" fill="#d6ecfa" stroke="#1f2224" stroke-width="5"/><rect x="123" y="70" width="234" height="167" fill="#9fd0f0" opacity=".55"/>';
+  o+='<path d="M40,90 H122" stroke="#7a5638" stroke-width="16"/><path d="M358,150 H440" stroke="#1e88d0" stroke-width="16"/><path d="M300,120 V180" stroke="#1f2224" stroke-width="3"/><path d="M300,150 H358" stroke="#1e88d0" stroke-width="10"/>';
+  o+='<text x="40" y="76" font-size="11" font-weight="800">agua sucia</text><text x="370" y="136" font-size="11" font-weight="800" fill="#1e6aa0">sale a media altura</text>';
+  for(let i=0;i<40;i++)o+=part(['arena','limo','arcilla'][i%3],130+r()*220,226+r()*10,1.3);
+  for(let i=0;i<14;i++){const x=150+r()*150;o+=`<g style="animation:sink ${3+r()*2}s linear ${r()*3}s infinite">${part(['arena','limo'][i%2],x,90,1.3)}</g>`}
+  o+=part('plast',160,70,1.4)+part('plast',240,72,1.2)+part('resto',300,74,1.4);
+  o+='<text x="240" y="268" text-anchor="middle" font-size="11" font-weight="800" fill="#7a5638">sedimentos (lo más denso)</text><text x="200" y="58" text-anchor="middle" font-size="11" font-weight="800" fill="#555">flotantes (lo más ligero)</text>';
+  o+='<style>@keyframes sink{from{transform:translateY(0)}to{transform:translateY(130px);opacity:.2}}</style>';$('#decSvg').innerHTML=o;
+  function hid(){const q=+$('#sHid').value;$('#vHid').textContent=q<4?'bajo':q<8?'medio':'alto';const dur=(3.2-q*.22).toFixed(2);
+    let o='<rect width="480" height="280" fill="#fff"/>';
+    o+='<path d="M170,40 L310,40 L310,90 L262,220 L218,220 L170,90Z" fill="#d6ecfa" stroke="#1f2224" stroke-width="4"/><rect x="214" y="220" width="52" height="40" rx="6" fill="#c9b28f" stroke="#1f2224" stroke-width="3"/>';
+    o+='<path d="M60,60 H175" stroke="#7a5638" stroke-width="16"/><path d="M240,40 V10 H440" stroke="#1e88d0" stroke-width="12" fill="none"/><path d="M240,40 V120" stroke="#1e88d0" stroke-width="8" stroke-dasharray="6 5"/>';
+    o+=`<g style="transform-origin:240px 100px"><path d="M240,60 m-60,0 a60,18 0 1,0 120,0 a60,18 0 1,0 -120,0" stroke="#1e88d0" stroke-width="2" fill="none" stroke-dasharray="10 8"><animate attributeName="stroke-dashoffset" from="0" to="-36" dur="${dur/3}s" repeatCount="indefinite"/></path><path d="M240,120 m-40,0 a40,12 0 1,0 80,0 a40,12 0 1,0 -80,0" stroke="#1e88d0" stroke-width="2" fill="none" stroke-dasharray="8 6"><animate attributeName="stroke-dashoffset" from="0" to="-28" dur="${dur/3}s" repeatCount="indefinite"/></path><path d="M240,180 m-20,0 a20,6 0 1,0 40,0 a20,6 0 1,0 -40,0" stroke="#1e88d0" stroke-width="2" fill="none" stroke-dasharray="6 4"><animate attributeName="stroke-dashoffset" from="0" to="-20" dur="${dur/3}s" repeatCount="indefinite"/></path></g>`;
+    for(let i=0;i<6;i++)o+=`<g>${part('arena',0,0,1.4)}<animateMotion dur="${dur}s" begin="${i*dur/6}s" repeatCount="indefinite" path="M175,60 C300,70 300,90 300,92 C290,130 270,180 258,210 C250,226 245,236 240,248"/></g>`;
+    for(let i=0;i<10;i++)o+=part('arena',224+(i%5)*9,250-(Math.floor(i/5))*7,1.2);
+    o+='<text x="60" y="48" font-size="11" font-weight="800">entrada tangencial</text><text x="330" y="28" font-size="11" font-weight="800" fill="#1e6aa0">salida central (limpia)</text><text x="280" y="248" font-size="11" font-weight="800" fill="#7a5638">depósito de sedimentos</text>';
+    $('#hidSvg').innerHTML=o}
+  $('#sHid').addEventListener('input',hid);hid()})();
+
+/* ---------- filtro de arena ---------- */
+(function(){let mode='f';
+  function draw(){const f=mode==='f';const r=rng(4);let o='<rect width="520" height="380" fill="#fff"/>';
+    o+='<rect x="150" y="40" width="220" height="300" rx="60" fill="#e9eef0" stroke="#555" stroke-width="5"/>';
+    o+='<rect x="158" y="160" width="204" height="150" fill="#e4cf9e"/>';for(let i=0;i<260;i++)o+=`<circle cx="${160+r()*200}" cy="${162+r()*146}" r="${1+r()*1.6}" fill="${['#c9ad6b','#d8bf84','#b89757'][i%3]}"/>`;
+    o+='<path d="M175,300 H345" stroke="#555" stroke-width="6"/>';for(let x=180;x<345;x+=20)o+=`<path d="M${x},300 v-10" stroke="#555" stroke-width="4"/>`;
+    o+='<rect x="235" y="22" width="50" height="16" rx="4" fill="#9aa3a8"/><text x="300" y="34" font-size="10" font-weight="800">carga de arena</text><rect x="235" y="340" width="50" height="14" rx="4" fill="#9aa3a8"/><text x="230" y="350" text-anchor="end" font-size="10" font-weight="800">descarga</text>';
+    o+='<text x="372" y="240" font-size="11" font-weight="800">capa ≥ 45 cm</text><path d="M366,162 V308" stroke="#d9433a" stroke-width="2"/><path d="M362,162 h8 M362,308 h8" stroke="#d9433a" stroke-width="2"/>';
+    if(f){o+='<path d="M20,70 H180 V100" stroke="#7a5638" stroke-width="14" fill="none"/><path d="M260,300 V365 H500" stroke="#1e88d0" stroke-width="14" fill="none"/>';
+      for(let i=0;i<8;i++)o+=`<g style="animation:dn 3s linear ${i*.37}s infinite">${part(['alga','limo','bact','arcilla'][i%4],190+(i*23)%140,110,1.4)}</g>`;
+      for(let i=0;i<12;i++)o+=part(['alga','limo','bact','arcilla'][i%4],170+(i*17)%180,166+(i%3)*4,1.2);
+      o+='<text x="20" y="58" font-size="12" font-weight="800">entra por arriba (sucia)</text><text x="300" y="358" font-size="12" font-weight="800" fill="#1e6aa0">sale por abajo (limpia)</text>';
+      o+='<style>@keyframes dn{from{transform:translateY(0)}to{transform:translateY(55px)}}</style>'}
+    else{o+='<path d="M20,365 H260 V300" stroke="#1e88d0" stroke-width="14" fill="none"/><path d="M180,100 V70 H500" stroke="#7a5638" stroke-width="14" fill="none"/>';
+      for(let i=0;i<12;i++)o+=`<g style="animation:up 2s linear ${i*.17}s infinite">${part(['alga','limo','bact','arcilla','arena'][i%5],175+(i*29)%170,250,1.4)}</g>`;
+      o+='<text x="20" y="352" font-size="12" font-weight="800" fill="#1e6aa0">agua limpia (del otro filtro) entra por abajo</text><text x="300" y="58" font-size="12" font-weight="800" fill="#7a5638">sale la suciedad por arriba</text>';
+      o+='<style>@keyframes up{from{transform:translateY(0)}to{transform:translateY(-170px);opacity:0}}</style>'}
+    $('#arSvg').innerHTML=o;
+    $('#arTxt').innerHTML=f?'<h3>Filtrando</h3><p style="margin:0">El agua entra por la <b>parte superior</b>, atraviesa la arena, que retiene la suciedad, y se recoge abajo con unos <b>colectores</b> que van a la tubería de salida.</p><div class="note" style="margin:8px 0 0">Limpio, el filtro no debe perder más de <b>3 m.c.a.</b></div>':'<h3>Contralavado</h3><p style="margin:0">Para limpiarlo se <b>invierte el sentido del agua</b>: entra por abajo, levanta y remueve la arena y la suciedad sale por arriba. Durante <b>al menos 5 minutos</b>.</p><div class="note" style="margin:8px 0 0">Lo mejor: <b>dos filtros</b>, y el agua filtrada de uno limpia el otro. Las derivaciones para invertir el flujo se prevén al montar.</div>'}
+  segInit('#arSeg',b=>{mode=b.dataset.k;draw()});draw();
+  function gr(){const g=+$('#sGr').value;$('#vGr').textContent=fmt(g,2)+' mm';$('#grOut').innerHTML=g<1.25?'⚠️ Arena demasiado fina: filtra muy bien, pero se <b>colmata enseguida</b> y hay que limpiar a menudo.':g>1.75?'⚠️ Arena demasiado gruesa: <b>filtrado deficiente</b>, pasan partículas que taparán los goteros.':'✅ Igual al paso del emisor: filtrado correcto y limpiezas razonables.'}
+  $('#sGr').addEventListener('input',gr);gr()})();
+
+/* ---------- malla ---------- */
+(function(){const M=[[40,420],[80,177],[120,125],[140,105],[200,74],[350,40]];
+  function draw(){const [mesh,mic]=M[+$('#sMesh').value];$('#vMesh').textContent=mesh+' mesh';$('#mesBig').textContent=mic+' micras';
+    const cell=Math.max(10,Math.min(60,mic/7)),hole=cell*.7;let o='<rect width="520" height="330" fill="#fff"/><g>';
+    for(let y=10;y<320;y+=cell)for(let x=10;x<510;x+=cell)o+=`<rect x="${x}" y="${y}" width="${hole}" height="${hole}" fill="#eaf6fd" stroke="#9aa3a8" stroke-width="1.5"/>`;
+    o+='</g>';const P=[['arena',300],['limo',60],['arcilla',3],['alga',150],['prec',90]];const r=rng(9);
+    P.forEach(([t,sz],i)=>{for(let k=0;k<4;k++){const x=40+r()*440,y=40+r()*250,pass=sz<mic;o+=`<g opacity="${pass?.35:1}">${part(t,x,y,Math.min(4,1+sz/90))}</g>`;if(!pass)o+=`<circle cx="${x}" cy="${y}" r="${10+Math.min(14,sz/25)}" fill="none" stroke="#d9433a" stroke-width="2"/>`}});
+    o+=`<rect x="10" y="296" width="290" height="26" rx="6" fill="#fff" opacity=".9"/><text x="18" y="314" font-size="12" font-weight="800">🔴 retenidas · transparentes: atraviesan</text>`;
+    $('#mesSvg').innerHTML=o;$('#mesTxt').innerHTML=mesh===120?'✅ La recomendada para goteo.':mesh<120?'Retiene poco: partículas pequeñas llegarán a los goteros.':'Filtra más fino, pero se colmatará antes.'}
+  $('#sMesh').addEventListener('input',draw);draw()})();
+
+/* ---------- anillas ---------- */
+(function(){const D=[['Azul','#1e6fd0',170,40,420],['Amarillo','#f5c518',340,80,177],['Rojo','#d9433a',490,120,125],['Negro','#1f2224',660,140,105],['Verde','#2f9a3b',null,200,74],['Gris','#8e979c',null,350,40]];
+  let cur=2,open=false;
+  $('#discs').innerHTML=D.map((d,i)=>`<button class="disc" data-i="${i}" style="background:${d[1]}" aria-label="Anillas de color ${d[0]}"></button>`).join('');
+  $('#discT').innerHTML='<tr><th>Color</th><th>Nº de ranuras</th><th>mesh</th><th>micras</th></tr>'+D.map(d=>`<tr><td><span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${d[1]};vertical-align:middle"></span> ${d[0]}</td><td>${d[2]??'—'}</td><td>${d[3]}</td><td>${d[4]}</td></tr>`).join('');
+  function draw(){const d=D[cur];let o='<rect width="520" height="340" fill="#fff"/>';
+    o+='<path d="M10,60 H520" stroke="#2f3438" stroke-width="18"/><rect x="190" y="40" width="140" height="34" rx="8" fill="#1e88d0"/>';
+    const dy=open?140:0;
+    o+=`<g style="transition:transform .8s" transform="translate(0,${dy})"><rect x="200" y="80" width="120" height="${open?60:200}" rx="18" fill="#cfe6f5" fill-opacity=".55" stroke="#1e6aa0" stroke-width="3"/></g>`;
+    const n=14;for(let i=0;i<n;i++){const y=96+i*12,ox=open?(i%2?-120:120)+(i%3)*14:0,oy=open?(i*4-30):0;o+=`<g transform="translate(${ox},${oy})" style="transition:transform .8s"><rect x="215" y="${y}" width="90" height="8" rx="3" fill="${d[1]}" stroke="#0005"/>`;for(let k=0;k<8;k++)o+=`<path d="M${222+k*10},${y+1} l4,6" stroke="#fff8" stroke-width="1"/>`;o+='</g>'}
+    o+='<rect x="254" y="86" width="12" height="180" fill="#9aa3a8"/>';for(let i=0;i<8;i++)o+=`<circle cx="260" cy="${100+i*20}" r="2.5" fill="#555"/>`;
+    if(open)o+='<g>'+[0,1,2,3,4].map(i=>`<path d="M${120+i*70},20 q4,40 0,80" stroke="#1e88d0" stroke-width="2" fill="none" class="flow"/>`).join('')+'</g><text x="260" y="330" text-anchor="middle" font-size="13" font-weight="800">Anillas separadas y limpiadas con un chorro de agua</text>';
+    else o+='<text x="260" y="330" text-anchor="middle" font-size="13" font-weight="800">Carcasa roscada: comprime las anillas</text><text x="340" y="190" font-size="11" font-weight="800">anillas asurcadas</text><text x="340" y="210" font-size="11" font-weight="800">soporte central con orificios</text>';
+    $('#anSvg').innerHTML=o;$$('#discs .disc').forEach((b,i)=>b.classList.toggle('on',i===cur));
+    $('#discTxt').innerHTML=`<p style="margin:0"><b>Anillas ${({Azul:'azules',Amarillo:'amarillas',Rojo:'rojas',Negro:'negras',Verde:'verdes',Gris:'grises'})[d[0]]}</b>: ${d[3]} mesh = <b>${d[4]} micras</b>. ${d[3]===120?'✅ Equivale a la malla recomendada para goteo.':d[3]<120?'Filtrado más grueso.':'Filtrado más fino: se colmata antes.'}</p><p style="margin:.5em 0 0;font-size:.9rem;color:var(--muted)">El grado de filtración depende del número de ranuras entre los anillos.</p>`}
+  $$('#discs .disc').forEach(b=>b.onclick=()=>{cur=+b.dataset.i;draw()});
+  $('#anOpen').onclick=()=>{open=true;draw()};$('#anClose').onclick=()=>{open=false;draw()};draw()})();
+
+/* ---------- orden cabezal ---------- */
+const IC={
+ balsa:'<rect x="4" y="30" width="56" height="26" rx="6" fill="#5aa04a"/><path d="M8,40 q8,-6 16,0 t16,0 t16,0" stroke="#d6ecfa" stroke-width="3" fill="none"/>',
+ bomba:'<rect x="10" y="22" width="34" height="26" rx="6" fill="#d9433a"/><circle cx="48" cy="35" r="10" fill="#555"/><rect x="6" y="48" width="44" height="6" fill="#555"/>',
+ hidro:'<path d="M14,8 H50 V22 L38,50 H26 L14,22Z" fill="#cfe6f5" stroke="#1e6aa0" stroke-width="3"/><rect x="24" y="50" width="16" height="8" fill="#c9b28f"/>',
+ arena:'<rect x="16" y="6" width="32" height="50" rx="14" fill="#9aa3a8" stroke="#555" stroke-width="2"/><rect x="18" y="30" width="28" height="18" fill="#e4cf9e"/>',
+ abono:'<rect x="14" y="10" width="30" height="40" rx="4" fill="#f5c518" stroke="#9a7a00" stroke-width="2"/><text x="29" y="36" text-anchor="middle" font-size="10" font-weight="800">NPK</text><path d="M44,30 h14" stroke="#555" stroke-width="3"/>',
+ malla:'<rect x="18" y="14" width="28" height="40" rx="8" fill="#cfe6f5" stroke="#1e6aa0" stroke-width="2"/>'+[0,1,2,3].map(i=>`<path d="M${22+i*6},18 v32" stroke="#555" stroke-width="1"/>`).join('')+[0,1,2,3,4].map(i=>`<path d="M20,${20+i*7} h24" stroke="#555" stroke-width="1"/>`).join('')+'<rect x="14" y="8" width="36" height="8" rx="3" fill="#1e88d0"/>',
+ contador:'<circle cx="32" cy="32" r="20" fill="#fff" stroke="#555" stroke-width="3"/><text x="32" y="36" text-anchor="middle" font-size="9" font-weight="800">m³ 0123</text>',
+ red:'<path d="M4,32 H60" stroke="#1f2224" stroke-width="6"/><circle cx="18" cy="32" r="4" fill="#7b5bb5"/><circle cx="40" cy="32" r="4" fill="#7b5bb5"/><circle cx="18" cy="42" r="2.5" fill="#1e88d0"/><circle cx="40" cy="42" r="2.5" fill="#1e88d0"/>'};
+(function(){const ORDER=[['balsa','Balsa (agua con arena y algas)'],['bomba','Equipo de bombeo'],['hidro','Hidrociclón'],['arena','Filtro de arena'],['abono','Inyección de abono'],['malla','Filtro de malla o anillas'],['contador','Contador / válvula volumétrica'],['red','Red de riego y goteros']];
+  const WHY={balsa:'Origen del agua.',bomba:'Da la presión al agua para que circule por el cabezal.',hidro:'Prefiltro: quita la arena gruesa (más de 75 micras) para que el filtro de arena no se colmate.',arena:'Retiene algas, bacterias, limos y arcillas.',abono:'Entre la arena y la malla: no favorece algas en la arena y la malla retiene impurezas y precipitados del abono.',malla:'Retiene la arena que escape del filtro de arena y los restos del abono. 120 mesh para goteo.',contador:'Necesita agua ya limpia para funcionar bien: después de los filtros.',red:'¡El agua llega limpia a los goteros!'};
+  let pos=0,err=0;const r=rng(13);const pool=ORDER.map(o=>[o,r()]).sort((a,b)=>a[1]-b[1]).map(a=>a[0]);
+  const chip=([k,n],cls='')=>`<button class="chip ${cls}" data-k="${k}"><svg viewBox="0 0 64 64">${IC[k]}</svg>${n}</button>`;
+  function render(){$('#ordPool').innerHTML=pool.filter(p=>!ORDER.slice(0,pos).some(o=>o[0]===p[0])).map(p=>chip(p)).join('')||'<span style="color:var(--muted);font-weight:700">¡No quedan piezas!</span>';
+    $('#ordLine').innerHTML=ORDER.slice(0,pos).map((o,i)=>(i?'<span class="arrow">→</span>':'')+chip(o,'ok')).join('')||'<span style="color:var(--muted);font-weight:700">Vacío</span>';
+    $$('#ordPool .chip').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k===ORDER[pos][0]){$('#ordFb').innerHTML=`✅ <b>${ORDER[pos][1]}</b>: ${WHY[k]}`;pos++;render();if(pos===ORDER.length)$('#ordFb').innerHTML=`🏆 ¡Cabezal completo con ${err} error${err===1?'':'es'}! Hidrociclón → arena → abono → malla → contador.`}else{err++;b.classList.add('ko');const ahead=ORDER.findIndex(o=>o[0]===k);$('#ordFb').innerHTML=`❌ <b>${ORDER[ahead][1]}</b> todavía no. ${k==='contador'?'El contador necesita agua limpia: va después de todos los filtros.':k==='malla'?'La malla se colmataría con la arena y las algas: antes deben pasar por otros filtros.':k==='abono'?'El abono se inyecta entre el filtro de arena y el de malla.':k==='arena'?'Con tanta arena, antes conviene un prefiltrado.':'Piensa por dónde pasa antes el agua.'}`}})}
+  $('#ordReset').onclick=()=>{pos=0;err=0;$('#ordFb').innerHTML='Elige la primera pieza por la que pasa el agua.';render()};render()})();
+
+/* ---------- simulador de limpieza ---------- */
+(function(){const CFG={arena:{clean:2.0,rate:[.35,.6],name:'filtro de arena'},anillas:{clean:1.0,rate:[.25,.5],name:'filtro de anillas'}};
+  let type='arena',day=0,dp,hist,clog,score,cleans,log,P_IN=30;
+  function reset(){day=0;dp=CFG[type].clean;hist=[[0,dp]];clog=0;score=0;cleans=0;log=[];$('#limFb').innerHTML=`Filtro limpio: pierde <b>${fmt(CFG[type].clean)} m.c.a.</b>. Límite para limpiar: <b>${fmt(CFG[type].clean+2)} m.c.a.</b> (2 m.c.a. más).`;draw()}
+  function draw(){const c=CFG[type],lim=c.clean+2,over=dp-lim;
+    $('#gIn').textContent=fmt(P_IN)+' m.c.a.';$('#gOut').textContent=fmt(P_IN-dp)+' m.c.a.';
+    $('#gDiff').innerHTML=`Pérdida de carga: <span style="color:${over>=0?'var(--rojo)':dp-c.clean>1.4?'var(--naranja)':'var(--hoja)'}">${fmt(dp)} m.c.a.</span> (filtro limpio: ${fmt(c.clean)}) · Día ${day} · Goteros atascados: ${clog}`;
+    let o='<rect width="520" height="300" fill="#fff"/><path d="M10,150 H200 M320,150 H420 V250 H510" stroke="#1f2224" stroke-width="12" fill="none"/>';
+    const dirt=Math.min(1,(dp-c.clean)/3);
+    if(type==='arena'){o+=`<rect x="200" y="60" width="120" height="190" rx="40" fill="#e9eef0" stroke="#555" stroke-width="4"/><rect x="206" y="140" width="108" height="90" fill="#e4cf9e"/><rect x="206" y="140" width="108" height="${10+dirt*60}" fill="#6b5a3a" opacity="${.3+dirt*.6}"/>`}
+    else{o+=`<rect x="215" y="70" width="90" height="170" rx="18" fill="#cfe6f5" stroke="#1e6aa0" stroke-width="3"/>`;for(let i=0;i<12;i++)o+=`<rect x="228" y="${84+i*12}" width="64" height="7" rx="3" fill="${dirt>.5?'#6b5a3a':'#d9433a'}" opacity="${1-dirt*.4}"/>`}
+    [[150,P_IN,'entrada'],[370,P_IN-dp,'salida']].forEach(([x,p,l])=>{const a=-200+p/40*220;o+=`<path d="M${x},150 V112" stroke="#d4a017" stroke-width="6"/><circle cx="${x}" cy="80" r="32" fill="#fff" stroke="#555" stroke-width="4"/><path d="M${x},80 L${x+26*Math.cos(a*Math.PI/180)},${80+26*Math.sin(a*Math.PI/180)}" stroke="#d9433a" stroke-width="3"/><circle cx="${x}" cy="80" r="3" fill="#1d2b24"/><text x="${x}" y="130" text-anchor="middle" font-size="11" font-weight="800">${l}</text>`});
+    for(let i=0;i<5;i++){const x=440+i*15,bad=i<clog;o+=`<circle cx="${x}" cy="250" r="5" fill="${bad?'#d9433a':'#7b5bb5'}"/>`+(bad?'':`<circle cx="${x}" cy="262" r="2.5" fill="#1e88d0" class="drop" style="animation-delay:${i*.2}s"/>`)}
+    o+='<text x="470" y="285" text-anchor="middle" font-size="11" font-weight="800">goteros</text>';
+    $('#limSvg').innerHTML=o;
+    // gráfica
+    const X=d=>40+d/Math.max(20,day+2)*460,Y=v=>180-v/8*160;let g='<rect width="520" height="200" fill="#fff"/>';
+    for(let v=0;v<=8;v+=2)g+=`<line x1="40" y1="${Y(v)}" x2="510" y2="${Y(v)}" stroke="#eee"/><text x="34" y="${Y(v)+4}" text-anchor="end" font-size="10">${v}</text>`;
+    g+=`<line x1="40" y1="${Y(lim)}" x2="510" y2="${Y(lim)}" stroke="#d9433a" stroke-dasharray="6 4"/><text x="506" y="${Y(lim)-4}" text-anchor="end" font-size="10" font-weight="800" fill="#d9433a">límite: limpiar</text>`;
+    g+=`<path d="M${hist.map(([d,v])=>X(d)+','+Y(v)).join(' L')}" stroke="#1e88d0" stroke-width="2.5" fill="none"/>`;
+    g+='<text x="275" y="198" text-anchor="middle" font-size="10" font-weight="800">días</text><text x="12" y="100" text-anchor="middle" font-size="10" font-weight="800" transform="rotate(-90 12 100)">pérdida (m.c.a.)</text>';
+    $('#limChart').innerHTML=g;$('#limLog').innerHTML=log.slice().reverse().join('<br>')||'Aquí aparecerá el diario de riego.'}
+  $('#limDay').onclick=()=>{const c=CFG[type];day++;const inc=c.rate[0]+Math.random()*(c.rate[1]-c.rate[0]);dp+=inc;const lim=c.clean+2;
+    if(dp>lim+.4&&clog<5){clog++;log.push(`Día ${day}: ⚠️ el filtro está colmatado, pasa suciedad y se atasca un gotero.`)}else log.push(`Día ${day}: riego normal. Pérdida ${fmt(dp)} m.c.a.`);
+    hist.push([day,dp]);if(dp>lim)$('#limFb').innerHTML=`<b style="color:var(--rojo)">🚨 Has superado el límite (${fmt(lim)} m.c.a.). ¡Limpia ya!</b>`;else if(dp>lim-.6)$('#limFb').innerHTML='🟠 Te acercas al límite. Vigila los manómetros.';draw()};
+  $('#limClean').onclick=()=>{const c=CFG[type],lim=c.clean+2,rise=dp-c.clean;cleans++;
+    let msg;if(rise<1.2)msg='🟡 Demasiado pronto: el filtro aún estaba bastante limpio. Gastas agua y tiempo de más.';else if(dp<=lim+.05)msg='✅ ¡Momento perfecto! La pérdida había subido unos 2 m.c.a.';else msg='🔴 Tarde: el filtro llevaba días colmatado.';
+    log.push(`Día ${day}: 🧽 limpieza (${type==='arena'?'contralavado de al menos 5 min':'abrir la carcasa y lavar las anillas con un chorro de agua'}). ${msg}`);
+    dp=c.clean;hist.push([day,dp]);$('#limFb').innerHTML=msg+(clog?` Goteros atascados hasta ahora: ${clog}.`:'');draw()};
+  $('#limReset').onclick=reset;segInit('#limSeg',b=>{type=b.dataset.k;reset()});reset()})();
+
+/* ---------- casos ---------- */
+(function(){const C=[
+  {t:'Jardín público regado con agua de pozo que trae bastante arena. Riego por goteo.',o:['Solo filtro de malla','Hidrociclón + filtro de malla o anillas','Solo depósito de decantación','Ningún filtro'],a:1,e:'El hidrociclón quita la arena (más de 75 micras) y la malla o las anillas protegen los goteros.',d:'pozo'},
+  {t:'Parque regado desde un estanque con algas y hojas. Goteo en los macizos.',o:['Filtro de arena + malla o anillas','Hidrociclón solo','Solo malla','Solo anillas azules'],a:0,e:'La materia orgánica (algas) colmataría la malla: primero la arena, después la malla.',d:'estanque'},
+  {t:'Jardín de una vivienda con agua de la red pública y goteo.',o:['Filtro de arena','Hidrociclón','Filtro de malla o anillas de 120 mesh','Depósito de decantación'],a:2,e:'Agua limpia: basta una malla o anillas de 125 micras (anillas rojas).',d:'red'},
+  {t:'Finca con agua de un barranco que arrastra ramas, plásticos y barro.',o:['Prefiltrado (depósito de decantación) y después los filtros','Solo filtro de malla','Solo anillas','Ningún filtro'],a:0,e:'Los objetos flotantes y el barro se quitan antes con un depósito de decantación.',d:'barranco'}];
+  let i=0;function draw(){const c=C[i];$('#scn').innerHTML=`<div style="font-weight:800;color:var(--muted)">Caso ${i+1} de ${C.length}</div><h3>${c.t}</h3>${c.o.map((o,k)=>`<button data-k="${k}">${String.fromCharCode(65+k)}. ${o}</button>`).join('')}<div id="scnFb"></div>`;
+    $$('#scn button[data-k]').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;$$('#scn button[data-k]').forEach(x=>{x.disabled=true;if(+x.dataset.k===c.a)x.classList.add('ok')});if(k!==c.a)b.classList.add('ko');$('#scnFb').innerHTML=`<div class="note ${k===c.a?'':'r'}" style="margin-bottom:8px">${k===c.a?'✅ ':'❌ '}${c.e}</div><button class="btn sm" id="scnNext">${i<C.length-1?'Siguiente caso →':'↺ Volver a empezar'}</button>`;$('#scnNext').onclick=()=>{i=(i+1)%C.length;draw()}});
+    let o='<rect width="520" height="260" fill="#e3f2fb"/><rect y="170" width="520" height="90" fill="#8b6343"/>';
+    if(c.d==='pozo'){o+='<rect x="60" y="110" width="80" height="60" fill="#9aa3a8"/><rect x="88" y="170" width="24" height="90" fill="#1d2b24"/>';for(let k=0;k<10;k++)o+=part('arena',90+k*2,200+k*6,1.3);o+='<text x="40" y="100" font-size="13" font-weight="800">pozo con arena</text>'}
+    if(c.d==='estanque'){o+='<ellipse cx="160" cy="175" rx="130" ry="26" fill="#5aa04a"/>';for(let k=0;k<12;k++)o+=part('alga',60+k*20,172,1.4);o+='<text x="40" y="140" font-size="13" font-weight="800">estanque con algas</text>'}
+    if(c.d==='red'){o+='<rect x="40" y="70" width="120" height="100" fill="#e8e3da" stroke="#9a948a"/><rect x="150" y="120" width="30" height="20" fill="#cfd8dc"/><text x="40" y="60" font-size="13" font-weight="800">vivienda · agua de red</text>'}
+    if(c.d==='barranco'){o+='<path d="M0,120 Q130,190 260,150 T520,160 L520,200 L0,200Z" fill="#7a5638"/>'+part('plast',100,150,2)+part('resto',200,160,2.5)+part('plast',330,150,1.8);o+='<text x="20" y="100" font-size="13" font-weight="800">barranco con barro, ramas y plásticos</text>'}
+    o+='<path d="M200,230 H500" stroke="#1f2224" stroke-width="6"/>';for(let k=0;k<6;k++)o+=`<circle cx="${230+k*48}" cy="230" r="5" fill="#7b5bb5"/><circle cx="${230+k*48}" cy="242" r="2.5" fill="#1e88d0" class="drop"/>`;
+    $('#scnSvg').innerHTML=o}
+  draw()})();
+
+/* ---------- quiz ---------- */
+const Q=[
+ {q:'¿Cuál es el problema más grave y frecuente del riego localizado?',o:['La falta de presión','Las obstrucciones de los emisores','El exceso de agua','El viento'],a:1,e:'Por eso toda instalación necesita equipo de filtrado.'},
+ {q:'Las algas y bacterias son partículas…',o:['Inorgánicas','Orgánicas','Precipitados químicos','Metálicas'],a:1,e:'Inorgánicas: arena, limo, arcilla.'},
+ {q:'¿Qué dos sistemas de prefiltrado estudia el tema?',o:['Malla y anillas','Depósito de decantación e hidrociclón','Arena y malla','Contador y válvula'],a:1,e:'Se usan cuando el agua trae mucha arena, limo, arcilla u objetos flotantes.'},
+ {q:'En un depósito de decantación, ¿por dónde sale el agua?',o:['Por el fondo','Por un estrechamiento a media altura','Por arriba del todo','No sale'],a:1,e:'Así lo denso se queda abajo y lo ligero flota arriba.'},
+ {q:'El hidrociclón elimina sobre todo partículas…',o:['De arena, de más de 75 micras','De algas','De sales disueltas','De bacterias'],a:0,e:'La rotación lanza la arena a las paredes y cae al depósito de sedimentos.'},
+ {q:'¿Qué filtro es el más adecuado para aguas con mucha materia orgánica?',o:['Malla','Anillas','Arena','Hidrociclón'],a:2,e:'Retiene algas, bacterias, limos y arcillas.'},
+ {q:'¿Qué espesor mínimo debe tener la capa de arena?',o:['5 cm','15 cm','45 cm','1 m'],a:2,e:'Además, el tamaño de la arena = paso del emisor (1–3 mm).'},
+ {q:'Si la arena es más fina que el paso del emisor…',o:['Filtra mal','Se colmata rápido y hay que limpiar más','No pasa el agua nunca','No influye'],a:1,e:'Si es más gruesa, el filtrado es deficiente.'},
+ {q:'¿Cómo se limpia un filtro de arena?',o:['Cambiando la arena cada día','Invirtiendo el sentido del agua (contralavado) al menos 5 minutos','Con aire comprimido','Golpeándolo'],a:1,e:'Mejor con dos filtros: el agua filtrada de uno limpia el otro.'},
+ {q:'¿Cuándo hay que limpiar un filtro?',o:['Cada día sin mirar','Cuando la pérdida de carga ha subido 2 m.c.a. respecto al filtro limpio','Cuando sale agua sucia','Una vez al año'],a:1,e:'Se lee con el mismo manómetro a la entrada y a la salida.'},
+ {q:'¿Dónde se coloca el filtro de malla respecto al de arena?',o:['Antes','Después (aguas abajo)','En paralelo','No se ponen juntos'],a:1,e:'Retiene la arena que pueda escaparse del filtro de arena.'},
+ {q:'¿Dónde se inyectan los fertilizantes?',o:['Antes del filtro de arena','Entre el filtro de arena y el de malla','Después de los goteros','En la balsa'],a:1,e:'No favorece algas en la arena y la malla retiene los precipitados del abono.'},
+ {q:'A mayor número de mesh…',o:['Orificios más grandes','Orificios más pequeños y más poder de filtración','Menos presión','Más caudal'],a:1,e:'1000 micras = 1 mm.'},
+ {q:'¿Qué filtración se recomienda para el riego por goteo?',o:['40 mesh (420 micras)','80 mesh (177 micras)','120 mesh (125 micras)','350 mesh (40 micras)'],a:2,e:'En anillas, corresponde al color rojo.'},
+ {q:'¿De qué color son las anillas de 120 mesh?',o:['Azul','Amarillo','Rojo','Verde'],a:2,e:'Azul 40, amarillo 80, rojo 120, negro 140, verde 200, gris 350.'},
+ {q:'El filtro de anillas tiene la misma aplicación que el filtro de…',o:['Arena','Malla','Hidrociclón','Decantación'],a:1,e:'Se usan indistintamente uno u otro.'}];
+let qi=0,sc=0;
+function renderQ(){const box=$('#quizBox');
+  if(qi>=Q.length){box.innerHTML=`<div class="score">${sc} / ${Q.length}</div><p style="text-align:center;font-size:1.1rem">${sc>=14?'🏆 ¡Experto en filtrado!':sc>=10?'💧 ¡Muy bien! Repasa los fallos.':'📚 Vuelve a recorrer la lección y repite el test.'}</p><div style="text-align:center"><button class="btn" id="qr">↺ Repetir</button></div>`;$('#qr').onclick=()=>{qi=0;sc=0;renderQ()};return}
+  const q=Q[qi];box.innerHTML=`<div class="qbar"><div style="width:${qi/Q.length*100}%"></div></div><p style="color:var(--muted);font-weight:800;margin:0">Pregunta ${qi+1} de ${Q.length} · Aciertos: ${sc}</p><h3>${q.q}</h3>${q.o.map((o,i)=>`<button class="opt" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}<div class="fb" id="fb"></div>`;
+  $$('.opt',box).forEach(b=>b.onclick=()=>{const i=+b.dataset.i,ok=i===q.a;if(ok)sc++;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.i===q.a)x.classList.add('ok')});if(!ok)b.classList.add('ko');
+    const fb=$('#fb');fb.className='fb show';fb.style.background=ok?'#dcefd6':'#fbdcd9';fb.innerHTML=(ok?'✅ <b>¡Correcto!</b> ':'❌ <b>No exactamente.</b> ')+q.e+'<div style="margin-top:10px"><button class="btn b" id="qn">'+(qi<Q.length-1?'Siguiente →':'Ver resultado')+'</button></div>';$('#qn').onclick=()=>{qi++;renderQ()}})}
+renderQ();
+
+/* ---------- glosario ---------- */
+const G=[['Obstrucción','Taponamiento del paso de agua de un emisor.','#d9433a'],['Prefiltrado','Equipo previo que quita lo más grueso para no colmatar los filtros.','#9b6b43'],['Decantación','Separación por sedimentación de lo pesado y flotación de lo ligero.','#7a5638'],['Hidrociclón','Cono invertido que separa la arena por rotación.','#1e88d0'],['Filtro de arena','Depósito con arena silícea o granítica para aguas muy sucias.','#c9ad6b'],['Contralavado','Limpieza invirtiendo el sentido del agua en el filtro de arena.','#145f99'],['Filtro de malla','Filtra en la superficie de una malla de acero o plástico.','#55625b'],['Filtro de anillas','Discos asurcados comprimidos que filtran entre sus ranuras.','#d9433a'],['Mesh','Número de orificios por pulgada de una malla.','#7b5bb5'],['Micra','Milésima de milímetro: 1000 micras = 1 mm.','#2f7a3b'],['Colmatación','Llenado del filtro con suciedad: aumenta la pérdida de carga.','#6b4a32'],['Pérdida de carga','Presión que se pierde al pasar el agua por un elemento.','#1e88d0'],['m.c.a.','Metros de columna de agua: unidad de presión (10 m.c.a. = 1 kg/cm²).','#2f7a3b'],['Precipitado','Sal que se vuelve sólida en el agua y tapona.','#8e979c'],['Aguas abajo','Más adelante en el sentido en que circula el agua.','#1d2b24'],['Fertirrigación','Abonar a través del agua de riego.','#f08a24']];
+$('#flips').innerHTML=G.map(g=>`<button class="flip" aria-label="${g[0]}"><div class="inn"><div class="fc" style="background:${g[2]}">${g[0]}</div><div class="bc">${g[1]}</div></div></button>`).join('');
+$$('.flip').forEach(f=>f.onclick=()=>f.classList.toggle('on'));
+})();
+</script>
+</body>
+</html>
